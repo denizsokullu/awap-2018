@@ -1,0 +1,46 @@
+@import 'prereqs.css';
+body{
+  background-color: transparent;
+  font-family: 'Montserrat', sans-serif;
+  padding-left:30px;
+  padding-right:30px;
+  margin-top:30px;
+}
+h1{
+  /*margin-top:400px;*/
+  padding:1rem;
+  font-size:2rem;
+  margin-bottom:20px;
+}
+#particles-js{
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  margin:0;
+  /*z-index:-1;*/
+}
+#mount{
+  display:inline-block;
+  position:relative;
+  z-index:2;
+}
+.projectBundle{
+  margin-top:8px;
+  padding:1rem;
+  display:block;
+  width:400px;
+  border:2px solid transparent;
+  border-radius:4px;
+  /*transition:border .2s ease-in-out;*/
+}
+.projectBundle:hover{
+  border-color:black;
+  transition:border .2s ease-in-out;
+  cursor:pointer;
+}
+.projectBundle h4{
+  font-weight:600;
+  margin-bottom:20px;
+}

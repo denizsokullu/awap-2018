@@ -1,0 +1,55 @@
+#gallery-container{
+  display:flex;
+  justify-content:flex-start;
+  flex-wrap:wrap;
+  margin:auto;
+}
+.galleryPiece{
+  width:400px;
+  border:2px solid #EEE;
+  border-radius:4px;
+  margin:20px;
+  /*margin-top:20px;
+  margin-bottom:20px;*/
+}
+.galleryPiece:hover{
+  border-color:black;
+  transition:border .2s ease-in-out;
+  cursor:pointer;
+}
+
+
+.galleryPiece > *{
+  padding:12px;
+}
+.galleryPiece img{
+  max-width:400px;
+  padding:0;
+  display:block;
+  margin:auto;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+}
+.button-container{
+  display:none;
+}
+.galleryPiece .button-container button{
+  width:auto;
+  padding:10px;
+  padding-top:6px;
+  padding-bottom:6px;
+  text-align:center;
+  font-size:12px;
+  outline:none;
+  border: solid 1px black;
+  color:black;
+  background-color:white;
+  transition:all 0.1s ease-in;
+  margin-right:12px;
+}
+.galleryPiece .button-container button:hover{
+  cursor:pointer;
+  background-color:black;
+  color:white;
+  transition:all 0.1s ease-in;
+}
