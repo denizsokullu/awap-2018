@@ -3,22 +3,13 @@ const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
 const app = express();
+const path = require('path');
 const url = require('url');
-const firebase = require('firebase');
 const { spawn } = require('child_process');
-var config = {
-  apiKey: "AIzaSyBgccrWZFk0uWNiys5_AIsd9msCJIaxSMg",
-  authDomain: "computational-design.firebaseapp.com",
-  databaseURL: "https://computational-design.firebaseio.com",
-  projectId: "computational-design",
-  storageBucket: "",
-  messagingSenderId: "597250126920"
-};
-
-firebase.initializeApp(config);
-var database = firebase.database();
-
+const formidable = require('formidable');
 const compiler = webpack(webpackConfig);
+const fs = require('fs');
+const fileUpload = require('express-fileupload');
 
 app.use(express.static(__dirname + '/www'));
 
@@ -31,41 +22,39 @@ app.use(webpackDevMiddleware(compiler, {
   },
   historyApiFallback: true,
 }));
-
-app.get('/',function(req,res){
-  res.sendFile(__dirname + '/www/index.html');
-})
-app.get('/generativeTypewriter/new',function(req,res,next){
-  //instead of generating smth here on your own,
-  //generate an empty submission to
-  newCanvasId = Math.random().toString(36).substring(2);
-  var ref = database.ref('generativeTypewriter/creations');
-  var newRef = ref.push({dataWrite:false},function(){
-    res.redirect(url.format({
-      pathname:"/generativeTypewriter/create",
-      query:{
-        id:newRef.key
-      }
-    }));
-  });
-
-})
-app.get('/generativeTypewriter/gallery',function(req,res){
-  res.sendFile(__dirname + '/www/gallery.html');
-})
-app.get('/generativeTypewriter/create',function(req,res){
-  res.sendFile(__dirname + '/www/generativeTypewriter/index.html');
-})
-
+app.use(fileUpload());
 // TESTING
-app.get('/test',function(req,res){
+app.get('/',function(req,res){
   const { spawn } = require('child_process');
   var process = spawn('python',['./script.py']);
     process.stdout.on('data', function(data){
-    res.send(data);
+    res.send("executed!");
+  })
+})
+app.post('/upload', function(req, res) {
+  if (!req.files)
+    return res.status(400).send('No files were uploaded.');
+  // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+  var file = req.files.file;
+  // Use the mv() method to place the file somewhere on your server
+  fs.writeFile(path.join("uploads/",file.name),file.data,(err)=>{
+    if (err) throw err;
+    res.redirect('/runCode?filename='+file.name);
+  });
+});
+
+app.get('/runCode',function(req,res){
+  const { spawn } = require('child_process');
+  var process = spawn('python',['./uploads/'+req.query.filename]);
+    process.stdout.on('data', function(data){
+    console.log(data);
+    res.redirect("/success");
   })
 })
 
+app.get('/success',function(req,res){
+  res.send("successful!");
+})
 
 //if create/id, go to that id by retrieving it in the front end
 const PORT = process.env.PORT || 8000;
