@@ -1,0 +1,14 @@
+html
+  head
+    title= title
+  body
+    div
+      h2 Welcome to Awap 2018
+      form(method='POST' action='/login')
+                div.form-group
+                  label(for='email') Email: 
+                  input#email.form-control(type='email', placeholder='' name='email')
+                div.form-group
+                  label(for='key') Key: 
+                  input#pw.form-control(type='password' name='key')
+                button.btn.btn-primary(type='submit') Log in!

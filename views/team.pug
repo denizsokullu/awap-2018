@@ -1,0 +1,15 @@
+html
+  head
+    title= title
+  body
+    div
+      h2 Welcome to Awap 2018
+      h4 Your Team
+      span This is your cookie last access time: 
+      div
+        a(href='/login') LOGIN
+      form(method='POST' action='/upload' encType="multipart/form-data")
+                div.form-group
+                  label(for='file') File: 
+                  input#file.form-control(type='file' name='file' accept=".py")
+                button.btn.btn-primary(type='submit') Upload and run!
