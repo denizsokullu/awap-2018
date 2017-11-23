@@ -1,0 +1,10 @@
+html
+  head
+    include includes/header.pug
+  body
+    div
+      include includes/nav.pug
+      div.content.error
+        h2 Error
+        div
+          a.errMessage= errMessage

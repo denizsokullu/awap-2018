@@ -1,0 +1,127 @@
+body{
+  font-family:'Source Sans Pro', sans-serif;
+}
+h2{
+  font-size:2rem;
+}
+a{
+  color:black;
+  text-decoration: none;
+  &:hover{
+    text-decoration: none;
+    color:black;
+  }
+  &:visited{
+    text-decoration: none;
+    color:black;
+  }
+}
+.nav{
+  background-color:#D8D8D8;
+  padding:1rem 3rem;
+  a{
+    display:inline-block;
+  }
+  .logo{
+    font-size:2rem;
+    margin-right:60px;
+    img{
+      height:40px;
+      width:auto;
+    }
+  }
+  .rightSide{
+    float:right;
+    display:inline-block;
+    height:40px;
+    line-height:40px;
+    font-weight:600;
+  }
+  .leftSide{
+        display:inline-block;
+    a:not(.logo){
+      margin:0 18px;
+      height:40px;
+      line-height:40px;
+      text-transform: uppercase;
+      font-weight:600;
+    }
+  }
+}
+.btn{
+  margin-top:1rem;
+  outline:none;
+  border:2px solid black;
+  background-color:white;
+  color:black;
+  transition:all .15s ease-in-out;
+  padding:.7rem 1rem;
+  border-radius:10px;
+  &:hover{
+      background-color:black;
+      color:white;
+      transition:all .15s ease-in-out;
+      cursor:pointer;
+  }
+  &.login{
+    display:inline-block;
+  }
+}
+.content{
+  padding:2rem 3rem;
+  .fileUpload{
+    margin:1rem;
+    margin-left:0;
+    display:inline-block;
+    .title{
+      margin-bottom:1rem;
+      font-size:1.2rem;
+    }
+  }
+  // placeholder element
+  .visualization,.gallery{
+    margin-top:2rem;
+  }
+  .gallery{
+    .galleryElement{
+      padding:1rem;
+      border:1px solid #C8C8C8;
+      margin-bottom:1rem;
+      span{
+        margin-right:1rem;
+      }
+      &:hover{
+        cursor:pointer;
+        background-color:#C8C8C8;
+      }
+    }
+  }
+}
+
+.content.error{
+  h2{
+    margin-bottom:1rem;
+    font-weight:600;
+  }
+}
+.content.rules{
+  h2{
+    margin-bottom:1rem;
+    font-weight:600;
+  }
+}
+
+@media(min-width:1024px) {
+  .nav,.content{
+    padding-left:6rem;
+    padding-right:6rem;
+  }
+}
+@media(min-width:1600px) {
+  .nav,.content{
+    padding-left:10vw;
+    padding-right:10vw;
+  }
+}
+
+@import "visualization";

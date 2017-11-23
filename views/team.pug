@@ -1,15 +1,29 @@
 html
   head
-    title= title
+    script!= output
+    include includes/header.pug
+    include includes/visualization.pug
   body
-    div
-      h2 Welcome to Awap 2018
-      h4 Your Team
-      span This is your cookie last access time: 
-      div
-        a(href='/login') LOGIN
-      form(method='POST' action='/upload' encType="multipart/form-data")
-                div.form-group
-                  label(for='file') File: 
-                  input#file.form-control(type='file' name='file' accept=".py")
-                button.btn.btn-primary(type='submit') Upload and run!
+    include includes/nav.pug
+    div.content
+      h2 
+        span= teamName
+        span  Submissions
+      div.row
+        div.visualization.col-md-12.col-lg-10
+          div.canvas#canvas
+          div.controls
+        div.gallery.col-md-12.col-lg-2
+          div.galleryContent
+            each val in games
+              div.galleryElement
+                span= JSON.stringify(val)
+            else
+              div No submissions made.
+          div.fileUpload
+            div.title Upload your player.py file to see it visualized!
+            form(method='POST' action='/upload' encType="multipart/form-data")
+                      div.form-group
+                        input#file.form-control(type='file' name='file' accept=".py")
+                      button.btn.btn-primary(type='submit') Upload!
+      

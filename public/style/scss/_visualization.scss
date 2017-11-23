@@ -1,0 +1,19 @@
+.visualization{
+  .canvas{
+    background-color:#D8D8D8;
+    // height:60vh;
+    min-height:600px;
+    min-width:800px;
+    position:relative;
+    canvas{
+      margin:auto;
+      left:0;
+      right:0;
+      position:absolute;
+    }
+  }.controls{
+    background-color:#C8C8C8;
+    height:5vh;
+    min-width:800px;
+  }
+}

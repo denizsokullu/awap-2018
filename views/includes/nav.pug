@@ -1,0 +1,15 @@
+div.nav.row
+  div.leftSide
+    div.col-xs-3
+      a.logo(href="/") 
+        img(src="images/logoPlaceholder.png", alt="awap2018")
+    div.links.col-xs-9
+      a(href="/team") Team
+      a(href="/rules") Rules
+      a(href="/scoreboard") Scoreboard
+  div.rightSide
+    if teamName
+      a.teamName(href="/team")= teamName
+    else 
+      a(href='/login') LOGIN
+      
