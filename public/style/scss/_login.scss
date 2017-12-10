@@ -1,0 +1,44 @@
+.login{
+  h2{
+    margin-bottom:32px;
+  }
+  p{
+    margin-bottom:.2rem;
+  }
+  form{
+    margin-top:32px;
+  }
+  .form-group{
+    margin-bottom:1rem;
+    max-width:320px;
+    label{
+      display:inline-block;
+      margin-bottom:.5rem;
+      text-align:left;
+      font-weight:600;
+    }
+    input{
+      display:block;
+      width:100%;
+      padding:.375rem .75rem;
+      font-size:1rem;
+      line-height:1.5;
+      background-color:white;
+      background-image:none;
+      background-clip:padding-box;
+      border:1px solid #ced4da;
+      border-radius:.25rem;
+      transition:border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      overflow:visible;
+      &:focus{
+        box-shadow:none;
+        outline:none;
+        border-color:black;
+      }
+      &:-webkit-autofill{
+        -webkit-box-shadow: 0 0 0 1000px white inset !important;
+      }
+    }
+
+  }
+}

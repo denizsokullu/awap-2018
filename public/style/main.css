@@ -109,4 +109,38 @@ a {
   height: 5vh;
   min-width: 800px; }
 
+.login h2 {
+  margin-bottom: 32px; }
+.login p {
+  margin-bottom: .2rem; }
+.login form {
+  margin-top: 32px; }
+.login .form-group {
+  margin-bottom: 1rem;
+  max-width: 320px; }
+  .login .form-group label {
+    display: inline-block;
+    margin-bottom: .5rem;
+    text-align: left;
+    font-weight: 600; }
+  .login .form-group input {
+    display: block;
+    width: 100%;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: white;
+    background-image: none;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    overflow: visible; }
+    .login .form-group input:focus {
+      box-shadow: none;
+      outline: none;
+      border-color: black; }
+    .login .form-group input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px white inset !important; }
+
 /*# sourceMappingURL=main.css.map */

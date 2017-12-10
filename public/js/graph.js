@@ -8,10 +8,12 @@ function Graph(nodes){
     for(var i = 0; i < nodeIDs.length; i++){
       key = nodeIDs[i];
       nodes = this.nodeData;
+      x = nodes[key].x;
+      y = nodes[key].y;
       this.nodes.push(new Node(key,                  // id
-                               randomB(50,canvasWidth-50),  // x location
-                               randomB(50,canvasHeight-50), // y location
-                               nodes[key]
+                               x,  // x location
+                               y, // y location
+                               nodes[key].n
                              ));
     }
   }
@@ -21,8 +23,8 @@ function Graph(nodes){
     //for each node, create an array of edges.
     for(var i = 0; i < nodeIDs.length; i++){
       key = nodeIDs[i];
-      curEdges = this.nodeData[key];
-      temp = new Array(this.nodeData[key].length).fill(key)
+      curEdges = this.nodeData[key].n;
+      temp = new Array(this.nodeData[key].n.length).fill(key)
       for(var j = 0; j < curEdges.length; j++){
         temp[j] = [temp[j]];
         temp[j].push(curEdges[j]);
@@ -57,6 +59,16 @@ function Graph(nodes){
   this.drawNodes = function(){
     for(var i =0; i < this.nodes.length; i++){
       this.nodes[i].draw();
+    }
+  }
+  this.updateNodes = function(data){
+    //this should be calling node.update
+    for(var i = 0; i < this.nodes.length; i++){
+      b = Math.floor(random(255) / 50);
+      r = b * 50;
+      console.log(r);
+      this.nodes[i].c = color(r,r,r);
+      this.nodes[i].number = b;
     }
   }
 }
