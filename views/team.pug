@@ -17,7 +17,8 @@ html
           div.galleryContent
             each val in games
               div.galleryElement
-                span= JSON.stringify(val)
+                span Submission
+                span= val.test
             else
               div No submissions made.
           div.fileUpload

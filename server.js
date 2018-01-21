@@ -1,4 +1,9 @@
 
+//Make admin access only
+//Create routes
+//CHECK THE FILESIZE, FILETYPE of the upload
+//figure out what fileError function is
+
 /////////////////////////////
 // Constants declared by AWAP
 
@@ -139,7 +144,7 @@ app.get('/team',function(req,res){
     //get team information
     key = req.session.key;
     outputs = [];
-    currentFolderPath = path.join("outputs/"+req.session.key);
+    currentFolderPath = path.join("game/outputs/"+req.session.key);
     fs.readdir(currentFolderPath,function(err,files){
       //read all the team outputs and add them to the team page as scripts
       files.map((filename)=>{
@@ -168,9 +173,8 @@ app.post('/upload',function(req,res){
     //CHECK THE FILESIZE, FILETYPE
     var file = req.files.file;
 
-
     //write into the req.session.key/filename = which should be the current counter
-    currentFolderPath = path.join("uploads/"+req.session.key)
+    currentFolderPath = path.join("game/uploads/"+req.session.key)
     mkdirp(currentFolderPath, function(err) {
       if(!err){
         fs.readdir(currentFolderPath,function(err,files){
@@ -191,7 +195,7 @@ app.post('/upload',function(req,res){
             }
             targetFiles.map((cur)=>{
               fs.unlink(path.join(currentFolderPath,cur+".py"),err_callback);
-              outputPath = path.join("outputs/"+req.session.key);
+              outputPath = path.join("game/outputs/"+req.session.key);
               // and from /outputs
               fs.unlink(path.join(outputPath,cur+".js"),err_callback);
             });
@@ -216,12 +220,14 @@ app.post('/upload',function(req,res){
 
 app.get('/runCode',function(req,res){
   const { spawn } = require('child_process');
-  var process = spawn('python',['./uploads/'+req.query.filename+".py"]);
+  // var process = spawn('python',['./uploads/'+req.query.filename+".py"]);
+  var process = spawn('python',['./game/gameCore/gameMain.py']);
   //don't write the file here if the output isn't what we want!
   process.stdout.on('data', function(data){
-  mkdirp(path.join(__dirname,'/outputs/'+req.session.key), function(err) {
-    fs.writeFile(path.join("outputs/",req.query.filename+".js"),data,(err)=>{
+  mkdirp(path.join(__dirname,'game/outputs/'+req.session.key), function(err) {
+    fs.writeFile(path.join("game/outputs/",req.query.filename+".js"),data,(err)=>{
         if (err){
+          //what is this function
           fileError();
         };
         res.redirect("/team");
