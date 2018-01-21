@@ -143,4 +143,28 @@ a {
     .login .form-group input:-webkit-autofill {
       -webkit-box-shadow: 0 0 0 1000px white inset !important; }
 
+.signupContainer {
+  margin-top: 80px;
+  font-size: 1.1rem; }
+  .signupContainer p {
+    display: block; }
+    .signupContainer p.intro {
+      margin-top: 2rem;
+      margin-bottom: 1rem; }
+    .signupContainer p.details {
+      padding-top: 1rem; }
+  .signupContainer span.strong {
+    font-weight: 700; }
+  .signupContainer .schedule {
+    padding-top: 1rem; }
+    .signupContainer .schedule p {
+      padding-left: 2rem; }
+  .signupContainer h3 {
+    margin-top: 2rem;
+    font-size: 1.2rem; }
+
+@media screen and (max-width: 1200px) {
+  .signupContainer iframe {
+    margin-top: 2rem; } }
+
 /*# sourceMappingURL=main.css.map */

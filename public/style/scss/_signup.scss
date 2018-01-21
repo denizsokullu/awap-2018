@@ -1,0 +1,36 @@
+.signupContainer{
+  margin-top:80px;
+  font-size:1.1rem;
+  p{
+    display:block;
+    &.intro{
+      margin-top:2rem;
+      margin-bottom:1rem;
+    }
+    &.details{
+      padding-top:1rem;
+    }
+  }
+  span{
+    &.strong{
+      font-weight:700;
+    }
+  }
+  .schedule{
+    padding-top:1rem;
+    p{
+      padding-left:2rem;
+    }
+  }
+  h3{
+    margin-top:2rem;
+    font-size:1.2rem;
+  }
+}
+@media screen and(max-width:1200px) {
+  .signupContainer{
+    iframe{
+      margin-top:2rem;
+    }
+  }
+}
