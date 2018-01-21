@@ -15,8 +15,8 @@ const mkdirp = require('mkdirp');
 
 const path = require('path');
 const url = require('url');
-const { spawn } = require('child_process');
-const firebase = require('firebase');
+// const { spawn } = require('child_process');
+// const firebase = require('firebase');
 
 const fs = require('fs');
 const fileUpload = require('express-fileupload');
@@ -30,32 +30,32 @@ app.set('views', path.join(__dirname, "./views"));
 app.use(express.static(path.join(__dirname,'./public')));
 
 
-app.use(require('morgan')('dev'));
+// app.use(require('morgan')('dev'));
 
-var session = require('express-session');
-var FileStore = require('session-file-store')(session);
+// var session = require('express-session');
+// var FileStore = require('session-file-store')(session);
 
-app.use(session({
-  name: 'server-session-cookie-id',
-  secret: 'my express secret',
-  saveUninitialized: true,
-  resave: true,
-  store: new FileStore()
-}));
+// app.use(session({
+//   name: 'server-session-cookie-id',
+//   secret: 'my express secret',
+//   saveUninitialized: true,
+//   resave: true,
+//   store: new FileStore()
+// }));
 //Required for using files
-var config = {
-  apiKey: "AIzaSyDdO7qZmjt72EPQvPFq3-GktqwZCuR8YWA",
-  authDomain: "awap-2018.firebaseapp.com",
-  databaseURL: "https://awap-2018.firebaseio.com",
-  projectId: "awap-2018",
-  storageBucket: "",
-  messagingSenderId: "1067834911251"
-};
+// var config = {
+//   apiKey: "AIzaSyDdO7qZmjt72EPQvPFq3-GktqwZCuR8YWA",
+//   authDomain: "awap-2018.firebaseapp.com",
+//   databaseURL: "https://awap-2018.firebaseio.com",
+//   projectId: "awap-2018",
+//   storageBucket: "",
+//   messagingSenderId: "1067834911251"
+// };
+//
+// firebase.initializeApp(config);
+// var database = firebase.database();
 
-firebase.initializeApp(config);
-var database = firebase.database();
-
-app.use(fileUpload());
+// app.use(fileUpload());
 
 app.get("/",(req,res) => {
   res.render("signup");
