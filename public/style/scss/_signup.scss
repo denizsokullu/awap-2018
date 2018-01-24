@@ -1,5 +1,9 @@
 .signupContainer{
-  margin-top:80px;
+  .mainLogo {
+    img {
+      width:100%;
+    }
+  }
   font-size:1.1rem;
   p{
     display:block;

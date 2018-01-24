@@ -144,8 +144,9 @@ a {
       -webkit-box-shadow: 0 0 0 1000px white inset !important; }
 
 .signupContainer {
-  margin-top: 80px;
   font-size: 1.1rem; }
+  .signupContainer .mainLogo img {
+    width: 100%; }
   .signupContainer p {
     display: block; }
     .signupContainer p.intro {
