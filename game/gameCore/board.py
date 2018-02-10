@@ -1,13 +1,87 @@
 import networkx as nx
 import copy
+import random
+import time
+import matplotlib.pyplot as plt
+import test_board
+import grid_board
+import circlePoints
 
 class Board():
-    def __init__(self):
-        self.G = self.generate_graph()
-        self.players = {1: {'player': 'p1', 'gain': 1}, 2: {'player': 'p2', 'gain': 1}}
+    def __init__(self, board = None):
+        #self.G = self.generate_graph()
+        if(board == 'ring'):
+            self.G = circlePoints.generate_board()
+            self.pos = circlePoints.draw_circle()
+        elif(board == 'grid'):
+            self.G = grid_board.generateGrid0(20)
+            self.pos = nx.spring_layout(self.G)
+        else:
+            self.G = self.generate_random_board(20,25,2)
+            self.pos = nx.spring_layout(self.G)
+        self.players = {1: {'player': 'p1', 'gain': 1}, 2: {'player': 'p2', 'gain': 1}, 3: {'player': 'p3', 'gain': 1}, 4: {'player': 'p4', 'gain': 1}}
+
+
+    def generate_random_board(self,num_nodes, num_edges, num_players, num_starting_units = 10):
+        # please make edges at least nodes-1
+        # please have more nodes than players
+        # thx
+
+        if(num_edges < num_nodes-1 or num_edges > (num_nodes-1) * num_nodes / 2):
+            print ('Please pick a valid number of edges (between num_nodes-1 and (num_nodes-1) * num_nodes / 2)')
+            return
+
+        if(num_nodes < num_players):
+            print ('Less nodes than players')
+            return
+
+        # first generate a graph with n nodes that has one connection between each one
+
+        nodes = list(range(num_nodes))
+        random.shuffle(nodes)
+
+        nodes_in_graph = [nodes[0]]
+        edges_in_graph = []
+
+        for new_node in nodes[1:]:
+            node_to_link_to_in_graph = random.choice(nodes_in_graph)
+            edges_in_graph.append((new_node, node_to_link_to_in_graph))
+            nodes_in_graph.append(new_node)
+
+        # fill in the rest of the desired edges with random edges
+
+        num_edges -= len(edges_in_graph)
+
+        for i in range(num_edges):
+            node1 = random.choice(nodes_in_graph)
+            node2 = random.choice(nodes_in_graph)
+            while(node1 == node2 or (node1,node2) in edges_in_graph or (node2,node1) in edges_in_graph):
+                node2 = random.choice(nodes_in_graph)
+                node1 = random.choice(nodes_in_graph)
+
+
+            edges_in_graph.append((node1, node2))
+
+        board = {}
+
+        for node in nodes_in_graph:
+            board[node] = {'owner':None, 'old_units': 10, 'new_units': 0}
+
+        for player in range(1,num_players+1):
+            node = random.choice(nodes_in_graph)
+            while(board[node]['owner'] is not None):
+                node = random.choice(nodes_in_graph)
+            board[node]['owner'] = player
+            board[node]['old_units'] = num_starting_units
+
+        G = nx.Graph(edges_in_graph)
+        nx.set_node_attributes(G, board)
+
+        return G
+
 
     def generate_graph(self):
-        init = {0: {'owner': 1, 'old_units': 20, 'new_units': 0}, 1: {'owner': 2, 'old_units': 10, 'new_units': 0}, 2: {'owner': None, 'old_units': 0, 'new_units': 0}}
+        init = {0: {'owner': 1, 'old_units': 20, 'new_units': 0}, 1: {'owner': 0, 'old_units': 10, 'new_units': 0}, 2: {'owner': None, 'old_units': 0, 'new_units': 0}}
         edges = [(0, 1), (1, 2)]
         G = nx.Graph(edges)
         nx.set_node_attributes(G, init)
@@ -20,15 +94,38 @@ class Board():
         return nodes, self.players[owner]
 
     def draw(self):
-        # nx.draw(self.G)
-        G=nx.dodecahedral_graph()
-        nx.draw(G)
+        pos = self.pos
+        # print (list(self.G.nodes))
+        colors = nx.get_node_attributes(self.G,'owner')
+        colorlist = list(colors.keys())
+        nodes = list(self.G.nodes())
+
+        playerColors = {1 : 0.25,   # blue
+                        2 : 0.5,    # green
+                        3 : 0.7,    # yellow
+                        4 : 0.9}    # red
+
+        colorlist = [playerColors.get(colors[node], 1.0) for node in nodes]
+        # print ("colors",colorlist, type(colors))
+
+        nodelabels=nx.get_node_attributes(self.G,'old_units')
+        for node in nodes:
+            nodelabels[node] = str(node) + '\n' + str(nodelabels[node]) + '\n'
+
+        nx.draw(self.G,pos = pos,node_color = colorlist, vmin = 0, vmax = 1)
+        nx.draw_networkx_labels(self.G,pos=pos,labels=nodelabels)
+        plt.show()
 
 
     def check_moves(self, dict_moves, p_id):
         copy_graph = self.G.copy()
         copy_players = copy.deepcopy(self.players)
         total_possible = self.players[p_id].get('gain')
+
+        # geometric sum, nodes are worth 1, .9, .9^2, .9^3....
+
+        total_possible = 4 + int(  (1-pow(.9,total_possible))/(1-.9)   )
+
         place = dict_moves.get('place')
         nodes_accessed = set()
         if place:
@@ -79,3 +176,8 @@ class Board():
         self.G = copy_graph.copy()
         return copy_graph, copy_players
 
+    def format_for_vis(self):
+        g = {}
+        for node in self.G.nodes:
+            g[node] = {'x':self.pos[node][0], 'y':self.pos[node][1],'n':list(self.G.neighbors(node))}
+        return g

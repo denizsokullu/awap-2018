@@ -1,6 +1,5 @@
 html
   head
-    script!= output
     include includes/header.pug
     include includes/visualization.pug
   body
@@ -10,15 +9,11 @@ html
         span= teamName
         span  Submissions
       div.row
-        div.visualization.col-md-12.col-lg-10
-          div.canvas#canvas
-          div.controls
-        div.gallery.col-md-12.col-lg-2
+        div.gallery.col-md-12
           div.galleryContent
             each val in games
               div.galleryElement
-                span Submission
-                span= val.test
+                span= val.filename
             else
               div No submissions made.
           div.fileUpload

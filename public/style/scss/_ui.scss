@@ -1,0 +1,41 @@
+.left-align,
+.right-align{
+  display:inline-block;
+}
+.right-align{
+  float:right;
+}
+.clear{
+  clear:both;
+}
+.ui-top-bar,
+.ui-bottom-bar{
+  position:absolute;
+  z-index:999999;
+  width:calc(100vw - 4rem);
+  margin:2rem;
+}
+.ui-top-bar{
+  top:0;
+  .dropdown{
+    @include dropdown;
+    background-color:$color-bg;
+  }
+}
+.ui-bottom-bar{
+  bottom:0;
+  .button,
+  .progress,
+  .progress-counter {
+    margin: 0 .5rem;
+  }
+  .button{
+    @include button;
+  }
+  .progress{
+    @include progress;
+  }
+  .progress-counter{
+
+  }
+}

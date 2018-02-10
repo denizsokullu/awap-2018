@@ -1,0 +1,96 @@
+@mixin button{
+  display:inline-block;
+  box-sizing:border-box;
+  position:relative;
+  text-transform: uppercase;
+  min-width:90px;
+  text-align:center;
+  font-size:.80rem;
+  padding:.75rem 1rem;
+  background-color:$color-bg;
+  color:$color-ui-1;
+  border:1px solid $color-ui-1;
+  user-select:none;
+  border-radius:3px;
+  &:hover,&:focus{
+    cursor:pointer;
+    background-color:$color-ui-1;
+    color:white;
+    transition:color .4s, background-color .4s;
+  }
+  &:focus{
+    outline:1px solid $color-ui-1;
+    outline-offset: 2px;
+  }
+}
+
+@mixin dropdown {
+  .label{
+    display:inline-block;
+    padding:.5rem 1rem;
+    color:$color-ui-1;
+  }
+  select{
+    -webkit-appearance:none;
+    -ms-appearance:none;
+    -moz-appearance:none;
+    appearance:none;
+    width:200px;
+    color:$color-ui-1;
+    border:1px solid $color-ui-1;
+    padding:.5rem 1rem;
+    background-color:$color-bg;
+    &:hover{
+      cursor:pointer
+    }
+    &:focus{
+      outline:none;
+
+    }
+  }
+}
+
+@mixin progress {
+  appearance:none;
+  -moz-appearance:none;
+  -webkit-appearance:none;
+  width:240px;
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+  }
+  &:focus {
+    outline: none;
+  }
+  &::-ms-track {
+    width: 100%;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+
+  height:8px;
+  border:1px solid $color-ui-1;
+  border-radius:3px;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: 1px solid $color-ui-1;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    margin-top: 0; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+  }
+  /* All the same stuff for Firefox */
+  &::-moz-range-thumb,
+  &::-ms-thumb {
+    border: 1px solid $color-ui-1;
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+  }
+}
