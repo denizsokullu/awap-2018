@@ -14,12 +14,18 @@
   z-index:999999;
   width:calc(100vw - 4rem);
   margin:2rem;
+  .button{
+    @include button;
+  }
 }
 .ui-top-bar{
   top:0;
   .dropdown{
+    display:inline-block;
     @include dropdown;
-    background-color:$color-bg;
+  }
+  .run-animation{
+    margin-left:1rem;
   }
 }
 .ui-bottom-bar{
@@ -28,9 +34,7 @@
   .progress,
   .progress-counter {
     margin: 0 .5rem;
-  }
-  .button{
-    @include button;
+    color:$color-ui-1;
   }
   .progress{
     @include progress;

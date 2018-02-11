@@ -1,12 +1,18 @@
 body{
   overflow: hidden;
 }
-#loading{
+.fullText{
   font-size:2em;
   width:100vw;
   height:100vh;
   text-align:center;
   line-height:90vh;
+  color:$color-ui-1;
+  position:relative;
+  z-index:99999;
+  &.hidden{
+    display:none;
+  }
 }
 #graph-container{
   // border:2px solid $color-ui-1;

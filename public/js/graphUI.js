@@ -6,10 +6,11 @@ __zoom = {
 
 __settings = {
   turnSpeed:1000,
-  turns:20,
+  turns:100,
   nodeCount:100,
   playerCount:4
 }
+
 var __graph;
 var timeline;
 var progress;
@@ -89,8 +90,9 @@ function createParallelTimeline(state,progress){
           offset:timeline[t].duration
         });
       }
+      timeline[t].seek(0);
     })
-    $('#loading').hide();
+    $('#loading').addClass('hidden');
   })
 
 }
@@ -98,6 +100,10 @@ function createParallelTimeline(state,progress){
 function loadGraph(g){
 
   __graph = createGraph(g.board);
+
+  __settings.nodeCount = Object.keys(g.board).length;
+  __settings.playerCount = Object.keys(g.state[0]).length;
+  __settings.turns = g.state.length;
 
   //Slider controls
   var progress = $('.progress');
@@ -112,6 +118,25 @@ function loadGraph(g){
   })
 
   createParallelTimeline(g.state,progress);
+}
+
+function loadRunAnimationListener(){
+  $(".run-animation").click(function(){
+    //Hide the message
+    $('#intro-message').addClass('hidden');
+    $('#loading').removeClass('hidden');
+
+    if(visualizationData.length == 0){
+      return;
+    }
+    //Clear the map
+    removeGraph();
+    //Find the filename
+    filename = $(".dropdown select").val();
+    g = visualizationData[filename].board
+    //Load the graph
+    loadGraph(visualizationData[filename]);
+  })
 }
 
 function loadControls(){
@@ -140,43 +165,15 @@ function removeGraph(){
 
 }
 
-function createTimeline(timeline,state){
-
+async function delayedLog(item){
+  await delay();
+  console.log(item)
 }
 
-function loadAnimation(turn,state,__graph){
-
-}
-
-$(document).ready(function(){
-
-  loadCurrentSelection();
-
-  loadControls();
-
-  loadSelectionListener();
-
-})
-
-function loadCurrentSelection(filename){
-  $('#loading').show();
-  if(visualizationData.length == 0){
-    return;
+async function processArray(array){
+  for(const item of array){
+    await delayedLog(item)
   }
-  if(!filename){
-    filename = $(".dropdown select").val();
-  }
-  console.log('Loading the game...')
-
-  removeGraph();
-  g = visualizationData[filename].board
-  loadGraph(visualizationData[filename]);
-}
-
-function loadSelectionListener(){
-  $(".dropdown select").change(function(){
-    loadCurrentSelection(this.value);
-  });
 }
 
 function resetZoom(){
@@ -193,3 +190,11 @@ function graphZoom(amount){
     $('#graph-container').css('transform','scale('+ newScale + ","+ newScale +')');
   }
 }
+
+$(document).ready(function(){
+
+  loadControls();
+
+  loadRunAnimationListener();
+
+})

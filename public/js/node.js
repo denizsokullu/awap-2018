@@ -48,15 +48,5 @@ function Node(id,x,y,neighbors,container){
       this.units += newValue;
     }
     this.occupant = newOccupant;
-    // console.log('#node-' + this.id);
-      // borderColor:this.colors[newOccupant],
-    id = this.id;
-    occupant = this.occupant;
-
-    // this.r = this.units < 10 ? 12 : Math.log(this.units)* 10;
-    // $($("#nodes").children()[parseInt(this.id)]).css({width:this.r,height:this.r});
-
-    //adding player color;
-    // $($("#nodes").children()[parseInt(this.id)]).removeClass('p1 p2 p3 p4').addClass('p'+newOccupant);
   }
 }

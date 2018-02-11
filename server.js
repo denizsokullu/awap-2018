@@ -9,6 +9,15 @@
 
 const MAX_UPLOAD = 2;
 
+const EXEC_DEFAULTS = {
+  encoding: 'utf8',
+  timeout: 15000,
+  maxBuffer: 512 * 1024,
+  killSignal: 'SIGTERM',
+  cwd: null,
+  env: null
+};
+
 /////////////////////////////
 
 const express = require('express');
@@ -135,7 +144,6 @@ app.post('/login', function(req, res) {
     }
 
     else if (!emailsArr.includes(email)){
-      console.log(emailsArr);
       raiseError(req,res,"The email you have entered is not registered");
     }
     else{
@@ -233,6 +241,8 @@ app.post('/upload',(req,res)=>{
   currentFolderPath = path.join("game/uploads/"+req.session.key)
   mkdirp(currentFolderPath,(err)=>{
     if(!err){
+
+      //Check for MAX_UPLOAD of files
       fs.readdir(currentFolderPath,(err,files)=>{
         //max_upload limit has been reached, clean
         if(files.length >= MAX_UPLOAD){
@@ -242,7 +252,6 @@ app.post('/upload',(req,res)=>{
             //add the filename that needs to be removed
             targetFiles.push(curFolder.splice(0,1)[0].split(".")[0]);
           }
-          console.log(targetFiles);
           //remove those from /uploads
           function err_callback(err){
             if(err){
@@ -257,31 +266,46 @@ app.post('/upload',(req,res)=>{
             fs.unlink(path.join(outputPath,cur+".js"),err_callback);
           });
         }
-
         targetName = parseInt(Date.now());
         fs.writeFile(currentFolderPath+'/'+targetName+".py",file.data,(err)=>{
           if (err){
             raiseError(req,res,"There was an issue with storing the result of your submission");
             return;
           };
-          const { spawn } = require('child_process');
+          // const { spawn } = require('child_process');
+          const { exec } = require('child_process');
           // var process = spawn('python',['./uploads/'+req.query.filename+".py"]);
-          var game = spawn('python3',['./game/gameCore/gameMain.py','player_ai_chris','player_ai_chris','player_ai_chris','player_ai_chris']);
-          //don't write the file here if the output isn't what we want!
-          fullData = '';
-          game.stdout.on('data', (data)=>{
-            fullData += data.toString();
-          });
-          game.on('close',(code)=>{
-            mkdirp(path.join(__dirname,'game/outputs/'+req.session.key),(err)=>{
-              fs.writeFile(path.join("game/outputs/",req.session.key,targetName+".js"),fullData,(err)=>{
-                if(err){
-                  raiseError(req,res,"There was an issue with storing the result of your submission");
-                }
-                res.redirect('/team');
+          // var game = spawn('python3',['./game/gameCore/gameMain.py','player_ai_chris','player_ai_chris','player_ai_chris','player_ai_chris']);
+          exec('python3 ./game/gameCore/gameMain.py player_ai_chris player_ai_chris player_ai_chris player_ai_chris',EXEC_DEFAULTS,(error,stdout,stderr)=>{
+            //Error occured, delete file.
+            if(error){
+              console.log(`Error: ${error}`);
+              //remove the uploaded file and redirect to /team with a message
+              fs.unlink(path.join(currentFolderPath,targetName+".py"),err_callback);
+              res.redirect('/team');
+              return;
+            }
+            //Python error occured, delete file.
+            else if(stderr){
+              console.log(`Stderr: ${stderr}`);
+              //remove the uploaded file and redirect to /team with a message
+              fs.unlink(path.join(currentFolderPath,targetName+".py"),err_callback);
+              res.redirect('/team');
+              return;
+            }
+            //Code ran to completion without errors
+            else{
+              mkdirp(path.join(__dirname,'game/outputs/'+req.session.key),(err)=>{
+                fs.writeFile(path.join("game/outputs/",req.session.key,targetName+".js"),stdout,(err)=>{
+                  if(err){
+                    raiseError(req,res,"There was an issue with storing the result of your submission");
+                  }
+                  res.redirect('/team');
+                  return
+                });
               });
-            });
-          })
+            }
+          });
         });
       });
 

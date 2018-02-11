@@ -4,18 +4,10 @@ html
     link(rel="stylesheet" type="text/css" href="style/viz.css")
     include includes/header.pug
     include includes/visualization.pug
-  body
     //- include includes/nav.pug
-    #loading Loading...
+    .fullText#intro-message Choose a game to visualize!
+    .fullText#loading.hidden Loading game...
     #graph-container
-      //- .test-block
-      //- .test-block
-      //- .test-block
-      //- .test-block
-      //- .test-block
-      //- .test-block
-      //- .test-block
-      //- .test-block
       #edges
         
       #nodes
@@ -31,6 +23,7 @@ html
                 option= val
         else
           div No submissions made.
+        button.button.run-animation Run
     .ui-bottom-bar
       .left-align
         button.button.play Play

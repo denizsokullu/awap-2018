@@ -27,7 +27,7 @@
 @mixin dropdown {
   .label{
     display:inline-block;
-    padding:.5rem 1rem;
+    padding:.75rem 1rem;
     color:$color-ui-1;
   }
   select{
@@ -38,7 +38,7 @@
     width:200px;
     color:$color-ui-1;
     border:1px solid $color-ui-1;
-    padding:.5rem 1rem;
+    padding:.75rem 1rem;
     background-color:$color-bg;
     &:hover{
       cursor:pointer
