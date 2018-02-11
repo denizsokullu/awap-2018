@@ -137,6 +137,10 @@ app.post('/login', function(req, res) {
   var key = req.body.key;
   currentUser = db.ref('/users').child(key).child('emails');
   currentUser.on('value',function(data){
+    if(!data.val()){
+      res.redirect("/login");
+      return;
+    }
     emails = data.val();
     emailsArr = Object.keys(emails).map((key)=> {return emails[key]});
     if (emails == null){
