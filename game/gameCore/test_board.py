@@ -1,5 +1,5 @@
 import networkx as nx
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 def generate_board():
@@ -50,4 +50,4 @@ def draw_graph(G):
         nodelabels[node] = str(node)
 
     nx.draw(G,pos = pos,labels = nodelabels)
-    plt.show()
+    # plt.show()
