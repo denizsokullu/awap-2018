@@ -2,7 +2,7 @@ import networkx as nx
 import copy
 import random
 import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import test_board
 import grid_board
 import circlePoints

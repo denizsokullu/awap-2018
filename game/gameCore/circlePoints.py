@@ -1,7 +1,7 @@
 
 import networkx as nx
 import math
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from numpy import array
 
 def draw_circle():
@@ -179,7 +179,6 @@ def draw_graph(G):
     nodelabels = {}
     for node in range(0,100):
         nodelabels[node] = str(node)
-    plt.figure(figsize=(5,5))
+    # plt.figure(figsize=(5,5))
     nx.draw(G,pos = pos,labels = nodelabels)
-    plt.show()
-
+    # plt.show()
