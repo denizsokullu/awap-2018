@@ -25,6 +25,7 @@ var currentGameplay;
 // playing/pausing/restarting affects all
 
 function createParallelTimeline(state,progress){
+
   timeline = {};
   //there should be a blank timeline that controls the progress bar
   for(var i = 0; i < __settings.nodeCount; i++){
@@ -46,8 +47,6 @@ function createParallelTimeline(state,progress){
     }
     timeline["node-"+i] = nodeTimeline;
   }
-
-
 
   $(document).ready(function(){
 
@@ -99,11 +98,15 @@ function createParallelTimeline(state,progress){
 
 function loadGraph(g){
 
-  __graph = createGraph(g.board);
-
   __settings.nodeCount = Object.keys(g.board).length;
   __settings.playerCount = Object.keys(g.state[0]).length;
   __settings.turns = g.state.length;
+
+  __graph = createGraph(g.board);
+
+  console.log(g.state);
+  console.log(__settings.nodeCount);
+
 
   //Slider controls
   var progress = $('.progress');

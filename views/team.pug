@@ -1,7 +1,6 @@
 html
   head
     include includes/header.pug
-    include includes/visualization.pug
   body
     include includes/nav.pug
     div.content
@@ -18,7 +17,14 @@ html
               div No submissions made.
           div.fileUpload
             div.title Upload your player.py file to see it visualized!
-            form(method='POST' action='/upload' encType="multipart/form-data")
+            form(method='POST' action='/upload' encType="multipart/form-data" id='submission')
+                      div.form-group
+                        .dropdown
+                          .label Select a map
+                          select(name='map' form='submission')
+                            option(value='ring') Ring
+                            option(value='grid') Grid
+                            option(value='flower') Flower
                       div.form-group
                         input#file.form-control(type='file' name='file' accept=".py")
                       button.btn.btn-primary(type='submit') Upload!

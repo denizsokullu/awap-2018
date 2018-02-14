@@ -229,6 +229,7 @@ app.get('/game',function(req,res){
 
 
 app.post('/upload',(req,res)=>{
+
   if(typeof req.session.key === "undefined"){
     raiseError(req,res,"You are not logged in");
     return;
@@ -240,6 +241,7 @@ app.post('/upload',(req,res)=>{
   }
   //CHECK THE FILESIZE, FILETYPE
   var file = req.files.file;
+  var mapName = req.body.map;
 
   //write into the req.session.key/filename = which should be the current counter
   currentFolderPath = path.join("game/uploads/"+req.session.key)
@@ -280,7 +282,7 @@ app.post('/upload',(req,res)=>{
           const { exec } = require('child_process');
           // var process = spawn('python',['./uploads/'+req.query.filename+".py"]);
           // var game = spawn('python3',['./game/gameCore/gameMain.py','player_ai_chris','player_ai_chris','player_ai_chris','player_ai_chris']);
-          exec('python3 ./game/gameCore/gameMain.py player_ai_chris player_ai_chris player_ai_chris player_ai_chris',EXEC_DEFAULTS,(error,stdout,stderr)=>{
+          exec('python3 ./game/gameCore/gameMain.py player_ai_chris player_ai_chris player_ai_chris player_ai_chris ' + mapName, EXEC_DEFAULTS, (error,stdout,stderr)=>{
             //Error occured, delete file.
             if(error){
               console.log(`Error: ${error}`);

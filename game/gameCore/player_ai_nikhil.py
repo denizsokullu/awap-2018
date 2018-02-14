@@ -29,8 +29,8 @@ class Player():
             return
 
         if (self.list_graph[node][1]['owner'] != self.player_num):
+            print("Error: Not the owner", self.player_num, self.list_graph[node])
             return
-
 
         if ((amount <= self.max_units) and (amount > 0)):
             place = (node, amount)
@@ -65,15 +65,17 @@ class Player():
         self.nodes = nodes
         self.max_units = max_units
         self.moved_nodes = None
-
         self.dict_moves = {'place': [], 'move': []}
+
 
     def player_place_units(self):
         self.nikhil_player_place_units()
+        print(self.dict_moves)
         return self.dict_moves
 
     def player_move_units(self):
         self.nikhil_player_move_units()
+        print(self.dict_moves)
         return self.dict_moves
 
     def get_enemy_units(self, node, min_val=False):
@@ -122,6 +124,7 @@ class Player():
                 self.long_term_attack_targets.remove(target)
 
         for i in range(self.max_units, 0, -1):
+            print(list(self.nodes))
             node = random.choice(list(self.nodes))
             self.place_unit(node, 1)
         return self.dict_moves

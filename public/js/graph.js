@@ -98,6 +98,7 @@ function Graph(nodes){
     });
   }
   this.updateNode = function(nodeid,occupant,value){
+    console.log(nodeid);
     this.nodes[nodeid].update(occupant,value,timeline,offset);
   }
   this.animateNode = function(nodeid,timeline,offset){

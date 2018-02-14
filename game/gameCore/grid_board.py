@@ -64,8 +64,16 @@ def generateGrid0(N):
         board[node] = {'owner':None, 'old_units': 10, 'new_units': 0}
 
     board[0] = {'owner':1, 'old_units': 10, 'new_units': 0}
-    board[20] = {'owner':2, 'old_units': 10, 'new_units': 0}
+    board[11] = {'owner':2, 'old_units': 10, 'new_units': 0}
+    board[143] = {'owner':3, 'old_units': 10, 'new_units': 0}
+    board[132] = {'owner':4, 'old_units': 10, 'new_units': 0}
     nx.set_node_attributes(G,board)
+
+
+    G.remove_node((N*N)/2 + N/2)
+    G.remove_node((N*N)/2 + N/2-1)
+    G.remove_node((N*N)/2 - N/2)
+    G.remove_node((N*N)/2 - N/2-1)
 
     return G
 
@@ -75,14 +83,36 @@ The recommended value of N is 20.
 
 REQUIRES: N is an EVEN positive integer
 '''
+
+def grid_pos(N):
+    pos = []
+    for i in range(N):
+        for j in range(N):
+            pos.append((i,j))
+    pos = [(x[0]*9/N,x[1]*9/N) for x in pos]
+    pos_dict = {}
+    for i in range(len(pos)):
+        pos_dict[i] = pos[i]
+
+    del pos_dict[((N*N)/2 + N/2)]
+    del pos_dict[((N*N)/2 + N/2-1)]
+    del pos_dict[((N*N)/2 - N/2)]
+    del pos_dict[((N*N)/2 - N/2-1)]
+    return pos_dict
+
 def printGrid0(N):
     G = generateGrid0(N)
-    print (nx.is_connected(G))
-    pos = nx.spring_layout(G)
+    # print (nx.is_connected(G))
+    pos = grid_pos(N)
 
     nodelabels = {}
     for i in range(N*N):
         nodelabels[i] = str(i)
+
+    del nodelabels[((N*N)/2 + N/2)]
+    del nodelabels[((N*N)/2 + N/2-1)]
+    del nodelabels[((N*N)/2 - N/2)]
+    del nodelabels[((N*N)/2 - N/2-1)]
 
     nx.draw(G,pos = pos,labels = nodelabels)
     # plt.show()

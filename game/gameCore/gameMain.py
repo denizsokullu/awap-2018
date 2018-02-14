@@ -9,6 +9,9 @@ NUM_TURNS = 100
 NUM_PLAYERS = 4
 
 VERBOSE = 0
+VISUALIZE = 0
+
+COMPETITION_MODE = 0
 
 def verbose_print(msg):
     if VERBOSE:
@@ -17,52 +20,60 @@ def verbose_print(msg):
 def main():
     players = []
     global NUM_PLAYERS
-    NUM_PLAYERS = len(sys.argv) - 1
+    NUM_PLAYERS = len(sys.argv) - 2
     for i in range(1,NUM_PLAYERS + 1):
         try:
             input_module = importlib.import_module(sys.argv[i])
         except:
-            print('Player module: ' + sys.argv[i] + ' not found.')
+            verbose_print('Player module: ' + sys.argv[i] + ' not found.')
             raise
         players.append(input_module.Player(i))
 
-    board = Board('ring')
+    board = Board(sys.argv[-1]) # if you change command line imputs you might have to change this
 
     if (board.G is None):
-        print('Error: Generated board is null')
+        verbose_print('Error: Generated board is null')
         return
 
 
-    run_game(board, players)
+    run_game(board, players, sys.argv[-1])
 
-def run_game(board, players):
+def run_game(board, players, board_name):
+    
     # construct the output starting from here
     data = {}
     # an array where index:turn, val:dict of board, placements and movements
     # placeholder version right now, update this later.
     data["state"] = []
     data["board"] = board.format_for_vis()
+    data["board_name"] = board_name
+
+    starting_locations = {}
+
+    for i in range(1,1+NUM_PLAYERS):
+        nodes, player = board.get_owned_nodes(i)
+        starting_locations[i] = nodes
+    data["starting_locations"] = starting_locations
     score = [0] * NUM_PLAYERS
     for i in range(NUM_TURNS):
 
-        # board.draw()
+        if (VISUALIZE):
+            board.draw()
         curr_turn = {}
-
+        score_str = "Score: "
         for j in range(NUM_PLAYERS):
 
             curr_turn[str(1+j)] = {}
 
-            verbose_print('Running Turn for ' + str(j) + ' Iteration: ' + str(i))
+            verbose_print('Running Turn for ' + str(1+j) + ' Iteration: ' + str(i))
 
             curr_player = players[j]
 
             # Player IDs start at 1, so we use 1+j instead of j
             nodes, player = board.get_owned_nodes(1+j)
             score[j] = len(nodes)
+            score_str = score_str + "P" + str(j) + "(" + str(score[j]) + ") - "
             if score[j] == 0:
-                continue
-
-            if (len(nodes) == 0):
                 continue
 
             # Adding nodes for the current player turn into the player key
@@ -73,16 +84,19 @@ def run_game(board, players):
             placements = curr_player.player_place_units()
 
             try:
-                board.G, board.players = board.check_moves(placements, 1+j)
+                temp_G, temp_players = board.check_moves(placements, 1+j)
             except Exception as ex:
                 verbose_print(ex)
                 continue
 
             # Adding placement data into the player key
 
-            if board.G is None or board.players is None:
-                print('Check moves failed after placement. Illegal action detected')
-                return
+            if ((temp_G is None) or (temp_players is None)):
+                verbose_print('Check moves failed after placement. Illegal action detected')
+                continue
+            else:
+                board.G = temp_G
+                board.players = temp_players
 
             curr_turn[str(1+j)]["placement"] = placements["place"];
 
@@ -95,20 +109,30 @@ def run_game(board, players):
                 verbose_print(ex)
                 continue
 
-            board.G, board.players = board.check_moves(movements, 1+j)
+            temp_G, temp_players = board.check_moves(movements, 1+j)
 
             # Adding placement data into the player key
 
-            if board.G is None or board.players is None:
-                print('Check moves failed after movement. Illegal action detected.')
+            if ((temp_G is None) or (temp_players is None)):
+                verbose_print('Check moves failed after movement. Illegal action detected.')
                 return
+            else:
+                board.G = temp_G
+                board.players = temp_players
 
             curr_turn[str(1+j)]["moves"] = movements["move"];
 
-        if (len(list(filter(lambda x: x > 0,score))) == 1):
-            break
+        if (COMPETITION_MODE):
+            if (len(list(filter(lambda x: x > 0,score))) == 1):
+                break
+
+        verbose_print(score_str);
 
         data["state"].append(curr_turn)
+
+    verbose_print('Final Board State')
+    if (VISUALIZE):
+        board.draw()
     jsonData = json.dumps(data)
     print(jsonData,end="")
 main()

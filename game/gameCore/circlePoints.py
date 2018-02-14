@@ -97,7 +97,7 @@ def draw_circle():
     maxX = max([x[0] for x in circlePoints])
     maxY = max([x[1] for x in circlePoints])
 
-    circlePoints = [(x[0] * 4.4/maxX + 4.4, x[1] * 4.4/maxY + 4.4) for x in circlePoints]
+    circlePoints = [(x[0] * 4.5/maxX + 4.5, x[1] * 4.5/maxY + 4.5) for x in circlePoints]
 
     circlePointDict = {}
 

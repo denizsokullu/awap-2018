@@ -2,10 +2,11 @@ import networkx as nx
 import copy
 import random
 import time
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import test_board
 import grid_board
 import circlePoints
+import flower_board
 
 class Board():
     def __init__(self, board = None):
@@ -14,10 +15,13 @@ class Board():
             self.G = circlePoints.generate_board()
             self.pos = circlePoints.draw_circle()
         elif(board == 'grid'):
-            self.G = grid_board.generateGrid0(20)
-            self.pos = nx.spring_layout(self.G)
+            self.G = grid_board.generateGrid0(12)
+            self.pos = grid_board.grid_pos(12)
+        elif(board == 'flower'):
+            self.G = flower_board.generate_board()
+            self.pos = flower_board.draw_circle()
         else:
-            self.G = self.generate_random_board(20,25,2)
+            self.G = self.generate_random_board(20,25,4)
             self.pos = nx.spring_layout(self.G)
         self.players = {1: {'player': 'p1', 'gain': 1}, 2: {'player': 'p2', 'gain': 1}, 3: {'player': 'p3', 'gain': 1}, 4: {'player': 'p4', 'gain': 1}}
 
@@ -145,6 +149,7 @@ class Board():
             for start, end, units in movement:
                 if copy_graph.nodes[start]['owner'] != p_id:
                     print('Error: Player does not own tile they are starting from.')
+                    print('Player ' + str(p_id) + ' is moving from ' + str(start) + ' which is owned by player ' + str(copy_graph.nodes[start]['owner']))
                     return None, None
                 if copy_graph.nodes[start]['old_units'] <= units:
                     print('Error: Player does not have enough units to move from start.')

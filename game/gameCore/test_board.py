@@ -25,7 +25,7 @@ def generate_board():
     #           (29,70),(20,71),(21,72), # opposite is 25
     #           (39,85),(30,86),(31,87)] # opposite is 35
 
-    print (edges)
+    # print (edges)
 
     board = {}
 

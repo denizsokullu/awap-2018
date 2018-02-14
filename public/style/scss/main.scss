@@ -126,5 +126,7 @@ a{
   }
 }
 
-@import "visualization";
+@import "prereqs";
+@import "components";
 @import "login";
+@import "team";
