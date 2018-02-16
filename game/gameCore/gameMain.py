@@ -1,7 +1,14 @@
 from __future__ import print_function
+SERVER_MODE = 1
+import sys
+import os
+
+if(SERVER_MODE):
+    temp_stdout = sys.stdout
+    sys.stdout = open(os.devnull, 'w')
+
 from board import Board
 from player import Player
-import sys
 import importlib
 import json
 
@@ -12,6 +19,7 @@ VERBOSE = 0
 VISUALIZE = 0
 
 COMPETITION_MODE = 0
+
 
 def verbose_print(msg):
     if VERBOSE:
@@ -36,17 +44,17 @@ def main():
         return
 
 
-    run_game(board, players, sys.argv[-1])
+    run_game(board, players)
 
-def run_game(board, players, board_name):
-    
+def run_game(board, players):
+
+
     # construct the output starting from here
     data = {}
     # an array where index:turn, val:dict of board, placements and movements
     # placeholder version right now, update this later.
     data["state"] = []
     data["board"] = board.format_for_vis()
-    data["board_name"] = board_name
 
     starting_locations = {}
 
@@ -59,11 +67,9 @@ def run_game(board, players, board_name):
 
         if (VISUALIZE):
             board.draw()
-        curr_turn = {}
+        curr_turn = {'1':{'placement':[],'moves':[]},'2':{'placement':[],'moves':[]},'3':{'placement':[],'moves':[]},'4':{'placement':[],'moves':[]}}
         score_str = "Score: "
         for j in range(NUM_PLAYERS):
-
-            curr_turn[str(1+j)] = {}
 
             verbose_print('Running Turn for ' + str(1+j) + ' Iteration: ' + str(i))
 
@@ -134,5 +140,7 @@ def run_game(board, players, board_name):
     if (VISUALIZE):
         board.draw()
     jsonData = json.dumps(data)
+    if(SERVER_MODE):
+        sys.stdout = temp_stdout
     print(jsonData,end="")
 main()

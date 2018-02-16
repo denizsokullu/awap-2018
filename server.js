@@ -11,7 +11,7 @@ const MAX_UPLOAD = 2;
 
 const EXEC_DEFAULTS = {
   encoding: 'utf8',
-  timeout: 15000,
+  timeout: 300000,
   maxBuffer: 512 * 1024,
   killSignal: 'SIGTERM',
   cwd: null,
@@ -282,13 +282,13 @@ app.post('/upload',(req,res)=>{
           const { exec } = require('child_process');
           // var process = spawn('python',['./uploads/'+req.query.filename+".py"]);
           // var game = spawn('python3',['./game/gameCore/gameMain.py','player_ai_chris','player_ai_chris','player_ai_chris','player_ai_chris']);
-          exec('python3 ./game/gameCore/gameMain.py player_ai_chris player_ai_chris player_ai_chris player_ai_chris ' + mapName, EXEC_DEFAULTS, (error,stdout,stderr)=>{
+          exec('python ./game/gameCore/gameMain.py player_one player_two player_two player_two ' + mapName, EXEC_DEFAULTS, (error,stdout,stderr)=>{
             //Error occured, delete file.
             if(error){
               console.log(`Error: ${error}`);
               //remove the uploaded file and redirect to /team with a message
               fs.unlink(path.join(currentFolderPath,targetName+".py"),err_callback);
-              res.redirect('/team');
+              // res.redirect('/team');
               return;
             }
             //Python error occured, delete file.
@@ -296,22 +296,24 @@ app.post('/upload',(req,res)=>{
               console.log(`Stderr: ${stderr}`);
               //remove the uploaded file and redirect to /team with a message
               fs.unlink(path.join(currentFolderPath,targetName+".py"),err_callback);
-              res.redirect('/team');
+              // res.redirect('/team');
               return;
             }
             //Code ran to completion without errors
             else{
+              console.log(stdout);
               mkdirp(path.join(__dirname,'game/outputs/'+req.session.key),(err)=>{
                 fs.writeFile(path.join("game/outputs/",req.session.key,targetName+".js"),stdout,(err)=>{
                   if(err){
                     raiseError(req,res,"There was an issue with storing the result of your submission");
                   }
-                  res.redirect('/team');
+                  // res.redirect('/team');
                   return
                 });
               });
             }
           });
+          res.redirect('/team')
         });
       });
 

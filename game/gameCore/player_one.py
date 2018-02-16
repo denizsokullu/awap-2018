@@ -169,6 +169,7 @@ class Player(BasePlayer):
             node = random.choice(list(self.nodes))
             self.verify_and_place_unit(node, 1)
 
+
         return self.dict_moves #Returns moves built up over the phase. Do not modify!
 
     
@@ -201,6 +202,11 @@ class Player(BasePlayer):
     # 3. Small viewing window
     def schedule_multi_turn_actions(self):
 
+        
+        #Calculate all path lengths, even if we don't use it
+        length = nx.all_pairs_shortest_path_length(self.board)
+        list_len = (dict(length)) #(nodeA, {nodeB:dist, nodeC:dist ...})
+
         for nodes in self.long_term_attack_targets:
 
             neighbors = self.board.neighbors(nodes)
@@ -215,10 +221,8 @@ class Player(BasePlayer):
 
             targets.sort(key=lambda pair: pair[1])
 
-            #Calculate all path lengths, even if we don't use it
-            length = nx.all_pairs_shortest_path_length(self.board)
-            list_len = list(length) #(nodeA, {nodeB:dist, nodeC:dist ...})
-            curr_dists = list_len[nodes][1] #Dictionary(nodeB:dist, nodeC:dist ...)
+
+            curr_dists = list_len[nodes] #Dictionary(nodeB:dist, nodeC:dist ...)
 
             curr_dists = sorted(curr_dists.items(), key=operator.itemgetter(1))
             curr_dists = filter(lambda d: (d[1] < 5) and (d[1] > 0), curr_dists) #Only focus on nodes between 1 and 4 units away
@@ -301,5 +305,6 @@ class Player(BasePlayer):
 
         #TODO: Consider pruning long_term_*_targets
         #Update: Considered!
+
         
         return self.dict_moves #Returns moves built up over the phase. Do not modify!

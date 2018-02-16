@@ -20,8 +20,9 @@ class BasePlayer:
         self.max_units = max_units
         self.nodes = nodes
         self.board = board
-        self.list_graph = list(self.board.nodes(data=True))
-        
+        self.list_graph = sorted(list(self.board.nodes(data=True)))
+        # print(self.list_graph)
+        # exit()
         return
     
     """

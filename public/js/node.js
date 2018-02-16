@@ -9,16 +9,16 @@ function Node(id,x,y,neighbors,container){
   this.pos.x = (x * $(container).height()) / graphRatio.x;
   this.pos.y = (y * $(container).height()) / graphRatio.y;
   // this.r = this.units < 16 ? 12 : Math.log(this.units)* 10;
-  this.r = 48;
+  this.r = 32;
 
   this.animate = function(timeline,offset){
     timeline["node-"+this.id].add({
       targets: '#node-' + this.id,
-      innerHTML: this.units,
+      innerHTML: `<div class="node-inner">${this.units}</div>`,
       round: 1,
       backgroundColor:this.colors[this.occupant],
       color:"#FFF",
-      easing: 'easeInOutExpo',
+      // easing: 'easeInOutEx',
       offset: offset,
       duration: __settings.turnSpeed
     });
@@ -26,8 +26,8 @@ function Node(id,x,y,neighbors,container){
 
   this.DOM = `<div class='node-container' id='node-${this.id}'
                 style='
-                       top:${this.pos.y}px;
-                       left:${this.pos.x}px'
+                       top:${this.pos.y - (this.r/2)}px;
+                       left:${this.pos.x - (this.r/2)}px'>
                 <div class='node-inner'>
                   ${this.units}
                 </div>
@@ -37,7 +37,8 @@ function Node(id,x,y,neighbors,container){
   this.neighbors = neighbors;
   this.draw = function(){
     $(this.container).append(this.DOM);
-    $($("#nodes").children()[parseInt(this.id)]).css({width:this.r,height:this.r});
+    $($("#nodes").children()[parseInt(this.id)]).css({'width':this.r,
+                                                      'height':this.r});
   }
 
   this.update = function(newOccupant,newValue){

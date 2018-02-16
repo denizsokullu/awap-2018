@@ -1,5 +1,5 @@
 __zoom = {
-  amount:.1,
+  amount:.2,
   limitLow: 0.2,
   limitHigh: 5
 }
@@ -58,6 +58,7 @@ function createParallelTimeline(state,progress){
             changedNodes = new Set();
 
             moves = actions[player].moves;
+            console.log(actions[player]);
             moves.map((action,index)=>{
               changedNodes.add(action[0]);
               changedNodes.add(action[1]);

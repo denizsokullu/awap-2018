@@ -75,6 +75,17 @@ def generateGrid0(N):
     G.remove_node((N*N)/2 - N/2)
     G.remove_node((N*N)/2 - N/2-1)
 
+    mapping = {}
+    i = 0
+    for node in G.nodes:
+        mapping[node] = i
+        i+=1
+
+
+    G = nx.relabel_nodes(G,lambda x:mapping[x])
+
+    # print (G.nodes)
+
     return G
 
 '''
@@ -98,7 +109,16 @@ def grid_pos(N):
     del pos_dict[((N*N)/2 + N/2-1)]
     del pos_dict[((N*N)/2 - N/2)]
     del pos_dict[((N*N)/2 - N/2-1)]
-    return pos_dict
+
+    keys = pos_dict.keys()
+    mapping = {}
+    i = 0
+    for key in keys:
+        mapping[i] = pos_dict[key]
+        i += 1
+
+    return mapping
+
 
 def printGrid0(N):
     G = generateGrid0(N)
@@ -106,13 +126,14 @@ def printGrid0(N):
     pos = grid_pos(N)
 
     nodelabels = {}
-    for i in range(N*N):
+    for i in range(N*N-4):
         nodelabels[i] = str(i)
 
-    del nodelabels[((N*N)/2 + N/2)]
-    del nodelabels[((N*N)/2 + N/2-1)]
-    del nodelabels[((N*N)/2 - N/2)]
-    del nodelabels[((N*N)/2 - N/2-1)]
+    # del nodelabels[((N*N)/2 + N/2)]
+    # del nodelabels[((N*N)/2 + N/2-1)]
+    # del nodelabels[((N*N)/2 - N/2)]
+    # del nodelabels[((N*N)/2 - N/2-1)]
+
 
     nx.draw(G,pos = pos,labels = nodelabels)
     # plt.show()

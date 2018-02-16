@@ -2,3 +2,9 @@ node_modules
 www/bundle.js
 *.css.map
 sessions
+game/gameCore/__pycache__/*
+game/gameCore/bin/*
+game/gameCore/include
+game/gameCore/lib
+game/uploads
+game/outputs
