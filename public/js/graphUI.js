@@ -11,6 +11,7 @@ __settings = {
   //0.5x 1500
   turnSpeedBase:1000,
   turnSpeed:1500,
+  //this changes once a game loads
   turns:100,
   nodeCount:100,
   playerCount:4
@@ -32,8 +33,10 @@ function createParallelTimeline(state,progress){
         easing: 'linear',
         autoplay: false,
         update:function(anim){
+          // window.alert(anim.progress);
+          turn = parseInt(anim.progress/100 * __settings.turns);
           progress.val(anim.progress);
-          $('.progress-counter .change').text(parseInt(anim.progress));
+          $('.progress-counter .change').text(turn);
         }
       });
     }
@@ -105,7 +108,7 @@ function loadGraph(g){
   __settings.nodeCount = Object.keys(g.board).length;
   __settings.playerCount = Object.keys(g.state[0]).length;
   __settings.turns = g.state.length;
-  console.log(__settings.turnSpeedBase * parseFloat($('.dropdown.speed select').val()));
+  $('.totalTurns').text(__settings.turns);
   __settings.turnSpeed = __settings.turnSpeedBase * parseFloat($('.dropdown.speed select').val());
 
   __graph = createGraph(g.board,g.starting_locations);
@@ -119,7 +122,7 @@ function loadGraph(g){
     Object.keys(timeline).map((t)=>{
       timeline[t].seek(timeline[t].duration * (progress.val() / 100));
     })
-    $('.progress-counter .change').text(parseInt(progress.val()));
+    $('.progress-counter .change').text(parseInt(progress.val() / 100 * __settings.turns));
   })
 
   createParallelTimeline(g.state,progress);
