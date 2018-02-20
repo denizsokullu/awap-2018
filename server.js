@@ -130,7 +130,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/login', function (req, res) {
-  res.render('login');
+  res.render('login2');
 });
 
 app.post('/login', function(req, res) {
@@ -173,12 +173,17 @@ app.get('/team',function(req,res){
     currentFolderPath = path.join("game/outputs/"+req.session.key);
     fs.readdir(currentFolderPath,function(err,files){
       //read all the team outputs and add them to the team page as scripts
-      files.map((filename)=>{
-        output = {}
-        output.data = fs.readFileSync(path.join(currentFolderPath,filename),'utf8');
-        output.filename = filename;
-        outputs.push(output);
-      });
+      if(files){
+        files.map((filename)=>{
+          output = {}
+          output.data = fs.readFileSync(path.join(currentFolderPath,filename),'utf8');
+          output.filename = filename;
+          outputs.push(output);
+        });
+      }
+      else{
+        outputs = {};
+      }
       res.render("team",{teamName:req.session.teamName,games:outputs});
 
       //adding the information we got from the output files as scripts onto the /team page.
