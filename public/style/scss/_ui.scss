@@ -8,28 +8,42 @@
 .clear{
   clear:both;
 }
-.ui-top-bar,
-.ui-bottom-bar{
+// .ui-top-bar,
+// .ui-bottom-bar{
+//   position:absolute;
+//   z-index:999999;
+//   width:calc(100vw - 4rem);
+//   margin:2rem;
+//   .button{
+//     @include button;
+//   }
+// }
+.ui{
   position:absolute;
   z-index:999999;
-  width:calc(100vw - 4rem);
-  margin:2rem;
+  width:$ui-width;
+  background-color:$color-bg;
+  -webkit-box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.15);
+     -moz-box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.15);
+          box-shadow: -3px 0px 5px 0px rgba(0,0,0,0.15);
+  padding:2rem;
+  right:0;
+  top:0;
+  height:calc(100vh);
+  overflow-y: scroll;
   .button{
     @include button;
   }
-}
-.ui-top-bar{
-  top:0;
   .dropdown{
     display:inline-block;
     @include dropdown;
+    &.speed{
+      margin-right:1rem;
+      select{
+        width:100px;
+      }
+    }
   }
-  .run-animation{
-    margin-left:1rem;
-  }
-}
-.ui-bottom-bar{
-  bottom:0;
   .button,
   .progress,
   .progress-counter {
@@ -39,7 +53,40 @@
   .progress{
     @include progress;
   }
-  .progress-counter{
-
+}
+.ui-similar{
+  margin-bottom:3rem;
+}
+.ui-row{
+  margin-bottom:1rem;
+  &.title{
+    font-size:18px;
+    font-weight:600;
+    margin-bottom:2rem;
   }
 }
+// .ui-top-bar{
+//   top:0;
+//   .dropdown{
+//     display:inline-block;
+//     @include dropdown;
+//   }
+//   .run-animation{
+//     margin-left:1rem;
+//   }
+// }
+// .ui-bottom-bar{
+//   bottom:0;
+//   .button,
+//   .progress,
+//   .progress-counter {
+//     margin: 0 .5rem;
+//     color:$color-ui-1;
+//   }
+//   .progress{
+//     @include progress;
+//   }
+//   .progress-counter{
+//
+//   }
+// }

@@ -5,7 +5,11 @@ __zoom = {
 }
 
 __settings = {
-  turnSpeed:1000,
+  //2x 500
+  //1x 1000
+  //0.5x 1500
+  turnSpeedBase:1000,
+  turnSpeed:1500,
   turns:100,
   nodeCount:100,
   playerCount:4
@@ -53,24 +57,31 @@ function createParallelTimeline(state,progress){
     turnOffset = 0;
     state.map((actions,turn)=>{
         Object.keys(actions).map((player)=>{
-            turnOffset = (__settings.turnSpeed * 4 * turn) + ((parseInt(player) - 1 ) * __settings.turnSpeed);
+            turnOffset = (__settings.turnSpeed * __settings.playerCount * turn) + ((parseInt(player) - 1 ) * __settings.turnSpeed);
             //moves
-            changedNodes = new Set();
 
+            changedNodes = new Set();
+            placement = actions[player].placement;
+            placement.map( action => {
+              changedNodes.add(action[0]);
+              __graph.updateNode(action[0],player,action[1]);
+              // console.log(action[0],player,action[1]);
+            });
+            changedNodes.forEach(node => {
+              __graph.animateNode(node,timeline,turnOffset)
+            })
+
+            turnOffset += __settings.turnSpeed / 2;
+
+            changedNodes = new Set();
             moves = actions[player].moves;
-            console.log(actions[player]);
             moves.map((action,index)=>{
               changedNodes.add(action[0]);
               changedNodes.add(action[1]);
               __graph.updateNode(action[0],player,-action[2]);
               __graph.updateNode(action[1],player,action[2]);
             })
-            placement = actions[player].placement;
-            placement.map((action)=>{
-              changedNodes.add(action[0]);
-              __graph.updateNode(action[0],player,action[1]);
-            });
-            changedNodes.forEach(function(node){
+            changedNodes.forEach(node => {
               __graph.animateNode(node,timeline,turnOffset)
             })
         });
@@ -102,19 +113,17 @@ function loadGraph(g){
   __settings.nodeCount = Object.keys(g.board).length;
   __settings.playerCount = Object.keys(g.state[0]).length;
   __settings.turns = g.state.length;
+  console.log(__settings.turnSpeedBase * parseFloat($('.dropdown.speed select').val()));
+  __settings.turnSpeed = __settings.turnSpeedBase * parseFloat($('.dropdown.speed select').val());
 
-  __graph = createGraph(g.board);
-
-  console.log(g.state);
-  console.log(__settings.nodeCount);
-
+  __graph = createGraph(g.board,g.starting_locations);
 
   //Slider controls
   var progress = $('.progress');
 
   progress.off('input');
   progress.on('input',function(){
-    $('.ui-bottom-bar .pause').click();
+    $('.ui .pause').click();
     Object.keys(timeline).map((t)=>{
       timeline[t].seek(timeline[t].duration * (progress.val() / 100));
     })
@@ -153,10 +162,13 @@ function loadControls(){
   $('#zoom-in').click(function(){graphZoom(+__zoom.amount)});
   $('#zoom-out').click(function(){graphZoom(-__zoom.amount)});
 
+  //Graph View Options
+  $('#toggle-numbers').click(()=>{$('.node-inner').toggle()});
+
   //Button Controls
-  $('.ui-bottom-bar .play').click(()=>{Object.keys(timeline).map((t)=>{timeline[t].play()})});
-  $('.ui-bottom-bar .pause').click(()=>{Object.keys(timeline).map((t)=>{timeline[t].pause()})});
-  $('.ui-bottom-bar .restart').click(()=>{Object.keys(timeline).map((t)=>{timeline[t].restart()})});
+  $('.ui .play').click(()=>{Object.keys(timeline).map((t)=>{timeline[t].play()})});
+  $('.ui .pause').click(()=>{Object.keys(timeline).map((t)=>{timeline[t].pause()})});
+  $('.ui .restart').click(()=>{Object.keys(timeline).map((t)=>{timeline[t].restart()})});
 
 }
 
@@ -167,17 +179,6 @@ function removeGraph(){
   $('.progress-counter .change').text("0").val(0);
   $('#nodes *, #edges-container, #players *').remove();
 
-}
-
-async function delayedLog(item){
-  await delay();
-  console.log(item)
-}
-
-async function processArray(array){
-  for(const item of array){
-    await delayedLog(item)
-  }
 }
 
 function resetZoom(){

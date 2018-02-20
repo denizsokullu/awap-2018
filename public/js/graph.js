@@ -1,22 +1,8 @@
-g = {
-  "0" : {x:30,y:200,n:["1","2","3","4"]},
-  "1" : {x:100,y:150,n:["0","4","6","5"]},
-  "2" : {x:280,y:240,n:["0","3","6","10"]},
-  "3" : {x:230,y:400,n:["0","1","2","4"]},
-  "4" : {x:700,y:340,n:["0","3"]},
-  "5" : {x:420,y:30,n:["1","10","6"]},
-  "6" : {x:304,y:480,n:["1","2","5"]},
-  "7" : {x:500,y:500,n:["1","10","5"]},
-  "8" : {x:340,y:280,n:["4","0","5"]},
-  "9" : {x:100,y:40,n:["1","8","5"]},
-  "10" : {x:20,y:430,n:["8","4","5"]}
-}
-
 graphRatio = {x:9,y:9};
 
-function createGraph(g){
+function createGraph(g,startNodes){
   graphData = new Graph(g);
-  graphData.createNodes();
+  graphData.createNodes(startNodes);
   graphData.createEdges(graphData);
   graphData.drawEdges();
   graphData.drawNodes();
@@ -28,18 +14,36 @@ function Graph(nodes){
   this.nodeData = nodes;
   this.nodes = [];
   this.edges = [];
-  this.createNodes = function(){
+  this.createNodes = function(startNodes){
     nodeIDs = Object.keys(this.nodeData);
+
+    //transform the start node data
+    startingLocs = Object.keys(startNodes).map(function(keys){
+      return startNodes[keys];
+    });
+    startNodes = {};
+    startingLocs.map(function(node){
+      nodeID = Object.keys(node)[0];
+      startNodes[nodeID] = node[nodeID].owner
+    })
+
     for(var i = 0; i < nodeIDs.length; i++){
       key = nodeIDs[i];
       nodes = this.nodeData;
       x = nodes[key].x;
       y = nodes[key].y;
+      if(startNodes[key]){
+        owner = startNodes[key]
+      }
+      else{
+        owner = 0;
+      }
       this.nodes.push(new Node(key,                  // id
                                x,  // x location
                                y, // y location
                                nodes[key].n,
-                               '#nodes'
+                               '#nodes',
+                               owner
                              ));
     }
   }
@@ -77,7 +81,6 @@ function Graph(nodes){
     }
     self.edges = finalEdges;
   }
-
   this.drawEdges = function(){
     edges = this.edges;
     dom = `<svg id="edges-container" width="100%" height="100%"></svg>`;
@@ -96,6 +99,11 @@ function Graph(nodes){
         nodes[i].draw();
       }
     });
+  }
+  this.createNodeDOMs = function(){
+    this.nodes.forEach(function(node){
+      node.createDOM();
+    })
   }
   this.updateNode = function(nodeid,occupant,value){
     this.nodes[nodeid].update(occupant,value);
