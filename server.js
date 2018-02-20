@@ -108,7 +108,9 @@ app.get("*",function(req, res, next){
 //          * initially public?
 //          * later on final results are viewed
 //          * links to the gameplay of each?
-// /runTournament?=password -> runs the tournament?(implement later)
+// /runCompetition?=password -> runs the tournament?(implement later)
+//   grab a submission from each team
+// /
 
 
 var raiseError = function(req,res,message){
@@ -200,11 +202,16 @@ app.get('/game',function(req,res){
     currentFolderPath = path.join("game/outputs/"+req.session.key);
     fs.readdir(currentFolderPath,function(err,files){
       //read all the team outputs and add them to the team page as scripts
-      files.map((filename)=>{
-        //simplify the file name here and in team
-        outputs[filename] = JSON.parse(fs.readFileSync(path.join(currentFolderPath,filename),'utf8'));
-      });
-      jsonOutput = 'visualizationData='+JSON.stringify(outputs);
+      if(files){
+        files.map((filename)=>{
+          //simplify the file name here and in team
+          outputs[filename] = JSON.parse(fs.readFileSync(path.join(currentFolderPath,filename),'utf8'));
+        });
+        jsonOutput = 'visualizationData='+JSON.stringify(outputs);
+      }
+      else{
+        jsonOutput = 'visualizationData={}'
+      }
       //adding the information we got from the output files as scripts onto the /team page.
       //all the visualizer has to do is to refer to to the index of the variables
 
