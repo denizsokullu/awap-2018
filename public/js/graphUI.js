@@ -5,6 +5,7 @@ __zoom = {
 }
 
 __settings = {
+  //4x 250
   //2x 500
   //1x 1000
   //0.5x 1500
@@ -20,13 +21,6 @@ var timeline;
 var progress;
 var currentGameplay;
 
-// 100 len array of timelines
-
-// each timeline only has one element in it
-
-// timing affects All
-
-// playing/pausing/restarting affects all
 
 function createParallelTimeline(state,progress){
 
@@ -58,14 +52,12 @@ function createParallelTimeline(state,progress){
     state.map((actions,turn)=>{
         Object.keys(actions).map((player)=>{
             turnOffset = (__settings.turnSpeed * __settings.playerCount * turn) + ((parseInt(player) - 1 ) * __settings.turnSpeed);
-            //moves
 
             changedNodes = new Set();
             placement = actions[player].placement;
             placement.map( action => {
               changedNodes.add(action[0]);
               __graph.updateNode(action[0],player,action[1]);
-              // console.log(action[0],player,action[1]);
             });
             changedNodes.forEach(node => {
               __graph.animateNode(node,timeline,turnOffset)
