@@ -2,7 +2,7 @@ import networkx as nx
 import copy
 import random
 import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import test_board
 import grid_board
 import circlePoints
@@ -118,7 +118,7 @@ class Board():
 
         nx.draw(self.G,pos = pos,node_color = colorlist, vmin = 0, vmax = 1)
         nx.draw_networkx_labels(self.G,pos=pos,labels=nodelabels)
-        plt.show()
+        # plt.show()
 
 
     def check_moves(self, dict_moves, p_id):
