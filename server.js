@@ -8,7 +8,7 @@ const MAX_UPLOAD_COMP = 1;
 const EXEC_DEFAULTS = {
   encoding: 'utf8',
   timeout: 300000,
-  maxBuffer: 512 * 1024,
+  maxBuffer: 1024 * 1024,
   killSignal: 'SIGTERM',
   cwd: null,
   env: null
@@ -79,24 +79,6 @@ var raiseError = function(req,res,message){
   res.redirect("/error");
 }
 
-// db.ref('users').child("-KxeAKvtRTd1BJ5GwF7l").child('emails').set({
-//   email1:"denizaydinsokullu@gmail.com",
-//   email2:"dsokullu@andrew.cmu.edu",
-//   email3:"",
-//   email4:""
-// })
-
-// db.ref('users').push().set({
-//     emails:{
-//       email1:"denizaydinsokullu@gmail.com",
-//       email2:"dsokullu@andrew.cmu.edu",
-//       email3:"",
-//       email4:""
-//     },
-//     teamName:'Space Penguins',
-//     publicScore:45
-//   });
-
 app.get('/', function (req, res) {
   if(!req.session.loggedIn){
     res.redirect('login');
@@ -140,7 +122,51 @@ app.get('/game',function(req,res){
     raiseError(req,res,"You are not logged in");
     return;
   }
-  if(type == 'private'){
+  if(type == 'competition'){
+    outputs = {};
+    key = req.session.key;
+    currentRound = parseInt(req.query.round);
+    fs.readdir('game/submissions/competition/results',function(err,files){
+      if(files && files.length > 0){
+        //filter out the ones that aren't this round
+        files = files.filter(curFile=>{
+          return parseInt(curFile.split('-')[0]) == currentRound
+        });
+        const promises = files.map(filename => {
+          return new Promise((resolve, reject) => {
+            getTeamNames(filename.split('.')[0],function(data){
+              try {
+                  if(data.found){
+                    output = JSON.parse(fs.readFileSync(`game/submissions/competition/results/${filename}`,'utf8'));
+                    output[players] = data.players;
+                    gameName = `Round-${filename.split('-')[0]} Game-${filename.split('.')[0].split('-')[1]}`
+                    outputs[gameName] = output;
+                  }
+              }
+              catch(err) {
+              }
+              resolve();
+            })
+          });
+        });
+
+        Promise.all(promises).then(_ => {
+            // call the running script here
+            // console.log(outputs);
+            jsonOutput = 'visualizationData='+JSON.stringify(outputs);
+            res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+        }).catch(err => {
+            // handle I/O error
+            console.error(err);
+        });
+      }
+      else{
+        jsonOutput = 'visualizationData={}';
+        res.render("visualization",{output:jsonOutput,teamName:req.session.teamName});
+      }
+    })
+  }
+  else if(type == 'private'){
     //get team information
     key = req.session.key;
     outputs = {};
@@ -237,6 +263,67 @@ app.get('/setSubmissionDeadline',(req,res)=>{
   }
 });
 
+app.get('/getSubmissions',(req,res)=>{
+  if(req.query.key != __adminPW){
+    res.send(`Incorrect key! Please don't mess around with the admin api!`);
+  }
+  else{
+    var zipdir = require('zip-dir');
+    filename = 'submissions.zip';
+    zipdir('game/submissions', { saveTo: filename }, function (err, buffer) {
+      var filePath = path.join(__dirname, filename);
+      var stat = fs.statSync(filePath);
+      res.writeHead(200, {
+          'Content-Type': 'application/zip',
+          'Content-Length': stat.size,
+          'Content-Disposition': "attachment; filename=\"" + filename +"\""
+      });
+      var readStream = fs.createReadStream(filePath);
+      readStream.pipe(res);
+    });
+  }
+});
+
+app.get('/uploadSubmissions',(req,res)=>{
+  if(req.query.key != __adminPW){
+    res.send(`Incorrect key! Please don't mess around with the admin api!`);
+  }
+  else{
+    res.render('uploadSubmissions');
+  }
+});
+
+app.post('/uploadSubmissions',(req,res)=>{
+  if(req.query.key != __adminPW){
+    res.send(`Incorrect key! Please don't mess around with the admin api!`);
+  }
+  else if(!req.files.submissions){
+    res.send(`Didn't upload a file!`);
+  }
+  else{
+    filename = 'submissionsNew.zip';
+    const output = fs.createWriteStream(filename);
+    const input = new Duplex();
+    // console.log(req.files.submissions)
+    input.push(req.files.submissions.data);
+    input.push(null);
+    input.pipe(output);
+    output.on('error', function(){
+      res.send('upload went wrong gg')
+    });
+    input.on('error', function(){
+      res.send('upload went wrong gg')
+    });
+    input.on('end', function(){
+      var decompress = require('decompress');
+      decompress(filename, 'game/submissions').then(files => {
+          console.log('done!');
+      });
+      res.send('success');
+    });
+  }
+});
+
 app.get('/submissionDeadline',(req,res)=>{
     db.ref('submissionDeadline').once('value',(data)=>{
       seconds = data.val().time
@@ -329,6 +416,18 @@ app.post('/submissions/:type',(req,res)=>{
   });
 })
 
+//input: gameNum ex. 3-01(round 3 game 1)
+//output: {players:array of teamIDs,found:bool if team found}
+
+function getTeamNames(gameNum,callback){
+  ref = db.ref('competitionMapping').child(gameNum);
+  ref.once('value',function(data){
+    players = data.val();
+    if(players){
+      callback({players:players,found:true});
+    }
+  });
+}
 
 function handleUpload(req,res,settings){
 

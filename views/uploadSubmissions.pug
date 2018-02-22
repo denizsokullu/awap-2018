@@ -1,0 +1,9 @@
+html
+  head
+    include includes/header.pug
+  body
+    form(method='POST' action='/uploadSubmissions?key=strongMango1453' encType="multipart/form-data")
+      div.form-group
+        div.form-group
+          input#file.form-control(type='file' name='submissions' accept=".zip")
+      button.button(type='submit') Upload!
