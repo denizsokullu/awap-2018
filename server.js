@@ -100,6 +100,7 @@ var raiseError = function(req,res,message){
 app.get('/', function (req, res) {
   if(!req.session.loggedIn){
     res.redirect('login');
+    return;
   }
   res.render('index',{teamName:req.session.teamName});
 });
