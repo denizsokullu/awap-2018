@@ -249,7 +249,7 @@ app.post('/submissions/:type',(req,res)=>{
     folderPath = `game/submissions/public/${userID}`;
   }
   else if(type == 'competition'){
-    folderPath = `game/submissions/public/${userID}`;
+    folderPath = `game/submissions/competition/${userID}`;
   }
   fs.readdir(folderPath,function(err,folders){
     submissions = {}
@@ -262,6 +262,7 @@ app.post('/submissions/:type',(req,res)=>{
         folders.map(folder=>{
           if(folder.includes('.py')){
             hasInput = true;
+            filename = folder.split('.')[0];
           }
           if(folder.includes('.js')){
             hasOutput = true;
