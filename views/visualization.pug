@@ -26,7 +26,7 @@ html
             .dropdown
               .label Current Game:
               select
-                each val in Object.keys(games)
+                each val in Object.keys(games).reverse()
                   option= val
         .ui-row
           .dropdown.speed

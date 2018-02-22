@@ -1,10 +1,103 @@
 html
   head
     include includes/header.pug
+    script(src="js/submission.js")
   body
-    include includes/nav.pug
-    div.content
-      h2 Welcome to Awap 2018 
-      div
-        a.btn.login(href='/login') LOGIN
-      span= message
+    include includes/structure.pug
+      .row.submission-outer
+        .col-xs-12.col-md-6.submit
+          .row
+            .title
+              h3 Code Submission
+          .row
+            .explanation
+              p
+              | Upload your player.py, pick enemies and see it visualized on this website or upload your final code to compete!
+          .row.options
+            .col-xs-4.private.selected
+              h2 Private
+            .col-xs-4.public
+              h2 Public
+            .col-xs-4.competition
+              h2 Competition
+          .row.form-container
+            .private-form.selected
+              form(method='POST' action='/uploadPrivate' encType="multipart/form-data" id='private-form')
+                div.form-group
+                  .dropdown
+                    .label Select a map: 
+                    select(name='map' form='private-form')
+                      option(value='ring') Ring
+                      option(value='grid') Grid
+                      option(value='flower') Flower
+                div.form-group
+                  .label Player 1 code:
+                  input#file.form-control(type='file' name='player1' accept=".py")
+                div.form-group
+                  .label Player 2 code:
+                  input#file.form-control(type='file' name='player2' accept=".py")
+                div.form-group
+                  .label Player 3 code:
+                  input#file.form-control(type='file' name='player3' accept=".py")
+                div.form-group
+                  .label Player 4 code:
+                  input#file.form-control(type='file' name='player4' accept=".py")
+                div.form-group.submit-button
+                  button.button(type='submit') Upload!
+            .public-form
+              .desc
+                p You can have 1 submission at a time in the public pool. Once you upload your code, you can view your score on the leaderboard, but for the sake of not giving away tactics, no team names will be displayed and your team will be highlighted to you only.
+                br
+                p Your code is matched with 3 other players in the public pool.
+                form(method='POST' action='/uploadPublic' encType="multipart/form-data" id='public-form')
+                  div.form-group
+                    .dropdown
+                      .label Select a map: 
+                      select(name='map' form='public-form')
+                        option(value='ring') Ring
+                        option(value='grid') Grid
+                        option(value='flower') Flower
+                  div.form-group
+                    .label Upload your code:
+                    input#file.form-control(type='file' name='player1' accept=".py")
+                  div.form-group.submit-button
+                    button.button(type='submit') Upload!
+            .competition-form
+              .desc
+                p Only your final submission counts! Make sure that you have run your code privately and good luck in getting your food empire algorithm to the top place!
+                br
+                p 
+                  strong Submission Deadline:
+                br
+                p 
+                  strong 5:30PM Saturday, February 24th
+                form(method='POST' action='/uploadCompetition' encType="multipart/form-data" id='comp-form')
+                  div.form-group
+                    .label Upload your code:
+                    input#file.form-control(type='file' name='player1' accept=".py")
+                  div.form-group.submit-button
+                    button.button(type='submit') Upload!
+        .col-xs-12.col-md-6.submissions
+          .private-submissions.selected
+            .row
+              .title
+                h3 Submissions
+            .row.submission-container
+            .row.link
+              a.button#private-link(href='/game?type=private') View
+          .public-submissions
+            .row
+              .title
+                h3 Submissions
+            .row.submission-container
+            .row.link
+              a.button#leaderboard-link(href='/leaderboard') Leaderboard
+            .row.link
+              a.button#public-link(href='/game?type=public') View
+          .competition-submissions
+            .row
+              .title
+                h3 Submissions
+            .row.submission-container
+            .row.link
+              a.button#public-link(href='/game?type=competition') View

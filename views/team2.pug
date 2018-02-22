@@ -1,0 +1,53 @@
+html
+  head
+    include includes/header.pug
+  body
+    include includes/nav.pug
+    div.content
+      h2 
+        span= teamName
+        span  Submissions
+      div.row
+        div.gallery.col-md-12
+          div.galleryContent
+            each val in games
+              div.galleryElement
+                span= val.filename
+            else
+              div No submissions made.
+          div.fileUpload
+            div.title Upload your player.py file to see it visualized!
+            form(method='POST' action='/uploadNew' encType="multipart/form-data" id='submission')
+                      div.form-group
+                        .dropdown
+                          .label Select a map
+                          select(name='map' form='submission')
+                            option(value='ring') Ring
+                            option(value='grid') Grid
+                            option(value='flower') Flower
+                      div.form-group
+                        input#file.form-control(type='file' name='player1' accept=".py")
+                      div.form-group
+                        .dropdown
+                          .label Select a bot
+                          select(name='player2' form='submission')
+                            option(value='player1') Bot 1
+                            option(value='player2') Bot 2
+                      div.form-group
+                        .dropdown
+                          .label Select a bot
+                          select(name='player3' form='submission')
+                            option(value='player1') Bot 1
+                            option(value='player2') Bot 2
+                      div.form-group
+                        .dropdown
+                          .label Select a bot
+                          select(name='player4' form='submission')
+                            option(value='player1') Bot 1
+                            option(value='player2') Bot 2
+                      //- div.form-group
+                      //-   input#file.form-control(type='file' name='player3' accept=".py")
+                      //- div.form-group
+                      //-   input#file.form-control(type='file' name='player4' accept=".py")
+                      button.btn.btn-primary(type='submit') Upload!
+      
