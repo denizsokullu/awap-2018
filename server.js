@@ -191,24 +191,32 @@ app.get('/game',function(req,res){
     fs.readdir(teamPath,function(err,folders){
       //read all the team outputs and add them to the team page as scripts
       if(typeof folders === 'object' && folders.length != 0){
-          folders.map(file=>{
-            if(file.includes('.js')){
-              try {
-                  fs.readFile(`${teamPath}/${file}`,'utf8',(err,data)=>{
-                    filename = file.split('.')[0]
+        foundOutput = false
+        outputFilename = '';
+        for(var file in folders){
+          file = folders[file];
+          // console.log(file)
+          if(file.includes('.js')){
+            foundOutput = true;
+            outputFilename = file;
+            try {
+                fs.readFile(`${teamPath}/${outputFilename}`,'utf8',(err,data)=>{
+                    filename = outputFilename.split('.')[0]
                     outputs[filename] = JSON.parse(data);
                     jsonOutput = 'visualizationData='+JSON.stringify(outputs);
                     res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
-                  });
-              }
-              catch(err) {
-              }
+                  return;
+                });
             }
-            else{
-              jsonOutput = 'visualizationData={}';
-              res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+            catch(err) {
             }
-          });
+          }
+        }
+        if(!foundOutput){
+          jsonOutput = 'visualizationData={}';
+          res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+          return;
+        }
       }
       else{
         jsonOutput = 'visualizationData={}';
