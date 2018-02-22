@@ -204,6 +204,10 @@ app.get('/game',function(req,res){
               catch(err) {
               }
             }
+            else{
+              jsonOutput = 'visualizationData={}';
+              res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+            }
           });
       }
       else{
