@@ -714,14 +714,14 @@ function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,r
       // console.log(`Error: ${error}`);
       //remove the uploaded file and redirect to /team with a message
       rimraf(folderPath,()=>{
-        res.redirect('/team');
+        res.redirect('/');
       })
       return;
     }
     //Python error occured, delete file.
     else if(stderr){
       rimraf(folderPath,()=>{
-        res.redirect('/team');
+        res.redirect('/');
       })
       return;
     }
