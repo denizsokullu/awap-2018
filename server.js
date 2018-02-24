@@ -7,7 +7,7 @@ const MAX_UPLOAD_COMP = 1;
 
 const EXEC_DEFAULTS = {
   encoding: 'utf8',
-  timeout: 300000,
+  timeout: 360000,
   maxBuffer: 1024 * 1024,
   killSignal: 'SIGTERM',
   cwd: null,
@@ -376,7 +376,6 @@ app.post('/submissions/:type',(req,res)=>{
     //read all the team outputs and add them to the team page as scripts
     if(typeof folders === 'object' && folders.length != 0){
       if(type == 'competition' || type == 'public'){
-        // console.log(folders);
         hasOutput = false;
         hasInput = false;
         folders.map(folder=>{

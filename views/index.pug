@@ -31,16 +31,16 @@ html
                       option(value='grid') Grid
                       option(value='flower') Flower
                 div.form-group
-                  .label Player 1 (Bottom Left):
+                  .label Player 1 (Pizza):
                   input#file.form-control(type='file' name='player1' accept=".py")
                 div.form-group
-                  .label Player 2 (Bottom Right):
+                  .label Player 2 (Burger):
                   input#file.form-control(type='file' name='player2' accept=".py")
                 div.form-group
-                  .label Player 3 (Top Right):
+                  .label Player 3 (Fries):
                   input#file.form-control(type='file' name='player3' accept=".py")
                 div.form-group
-                  .label Player 4 (Top Left):
+                  .label Player 4 (Hot Dog):
                   input#file.form-control(type='file' name='player4' accept=".py")
                 div.form-group.submit-button
                   button.button(type='submit') Upload!
@@ -72,7 +72,7 @@ html
                   strong Submission Deadline:
                 br
                 p 
-                  strong 5:30PM Saturday, February 24th
+                  strong 6:00PM Saturday, February 24th
                 form(method='POST' action='/uploadCompetition' encType="multipart/form-data" id='comp-form')
                   div.form-group
                     .label Upload your code:

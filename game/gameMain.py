@@ -12,7 +12,7 @@ from player import Player
 import importlib
 import json
 
-NUM_TURNS = 100
+NUM_TURNS = 200
 NUM_PLAYERS = 4
 
 VERBOSE = 0
