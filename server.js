@@ -592,7 +592,7 @@ function handleUpload(req,res,settings){
                     updateScore(teamID,parseInt(score));
                   }
 
-                });chrome
+                });
               })
             }
             else if(settings.isCompetition){
