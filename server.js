@@ -33,6 +33,19 @@ const fileUpload = require('express-fileupload');
 const rimraf = require('rimraf');
 const Duplex = require('stream').Duplex;
 
+const session = require('express-session');
+const redis   = require("redis");
+const redisStore = require('connect-redis')(session);
+
+var client;
+if (process.env.REDISTOGO_URL) {
+    redisURL = url.parse(process.env.REDISTOGO_URL);
+    client = redis.createClient(redisURL.port, redisURL.hostname);
+    client.auth(redisURL.auth.split(":")[1]);
+} else {
+    client = redis.createClient();
+}
+
 app.use(bodyParser.urlencoded({extended: true}));
 //loading pug
 app.set('view engine', 'pug');
@@ -41,15 +54,15 @@ app.set('views', path.join(__dirname, "./views"));
 app.use(express.static(path.join(__dirname,'./public')));
 
 
-var session = require('express-session');
+// var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
 app.use(session({
-  name: 'server-session-cookie-id',
-  secret: 'my express secret',
+  name: 'Session Storage',
+  secret: 'password',
   saveUninitialized: true,
   resave: true,
-  store: new FileStore()
+  store: new redisStore({ host: 'localhost', port: 6379, client: client,ttl : 260})
 }));
 
 app.use(fileUpload());
@@ -579,7 +592,7 @@ function handleUpload(req,res,settings){
                     updateScore(teamID,parseInt(score));
                   }
 
-                });
+                });chrome
               })
             }
             else if(settings.isCompetition){
