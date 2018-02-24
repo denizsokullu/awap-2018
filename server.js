@@ -92,7 +92,6 @@ app.get('/leaderboard', function(req,res){
   db.ref('users').once('value',function(data){
     users = data.val();
     Object.keys(users).map((user)=>{
-      console.log(users[user]);
       if(users[user].publicScore){
         if(user == req.session.key){
           allScores.push({score:users[user].publicScore,highlight:true})
@@ -489,7 +488,6 @@ function handleUpload(req,res,settings){
     res.redirect('/')
     return;
   }
-
   if(settings.check && !settings.check()){
     res.redirect('/')
     return;
@@ -582,9 +580,9 @@ function handleUpload(req,res,settings){
                 });
               })
             }
-            // else if(settings.isCompetition){
-            //
-            // }
+            else if(settings.isCompetition){
+              res.redirect('/')
+            }
 
         }).catch(err => {
             // handle I/O error
@@ -606,6 +604,9 @@ function fillMatch(teamID,callback){
   playersNeeded = 4;
   playerPoolFiles = ['','','',''];
   fs.readdir(publicPath,function(err,teams){
+    teams = teams.filter(teamName=>{
+      return teamName != 'ignore.txt'
+    })
     if(teams){
       numTeams = teams.length;
       for(var i = 0; i < playersNeeded; i++){
@@ -706,13 +707,14 @@ function updateScore(teamID,score){
 function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,res,callback){
   const { exec } = require('child_process');
   dotPath = execPath.replace(/\//g,'.');
+  console.log(files,teamIndex,teamID,mapName)
   files = files.map(player=>{
     return `${dotPath}.${player}`
   })
   // console.log(files);
   exec(`python game/gameMain.py ${files.join(' ')} ${mapName}`, EXEC_DEFAULTS, (error,stdout,stderr)=>{
     if(error){
-      // console.log(`Error: ${error}`);
+      console.log(`Error: ${error}`);
       //remove the uploaded file and redirect to /team with a message
       rimraf(folderPath,()=>{
         res.redirect('/');
@@ -721,6 +723,7 @@ function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,r
     }
     //Python error occured, delete file.
     else if(stderr){
+      console.log('error')
       rimraf(folderPath,()=>{
         res.redirect('/');
       })
@@ -788,9 +791,10 @@ app.post('/uploadCompetition',(req,res)=>{
   db.ref('submissionDeadline').once('value',(data) =>{
     //this is Feb 24, 5:30:00pm
     submissionDeadline = data.val().time;
-    console.log(submissionDeadline);
+    // console.log(submissionDeadline);
     function submissionCheck(){
-      return gameID <= submissionDeadline
+      console.log(gameID <= submissionDeadline,gameID,submissionDeadline)
+      return gameID <= parseInt(submissionDeadline)
     }
     __upload_comp_settings = {
       objectNames:['player1'],
