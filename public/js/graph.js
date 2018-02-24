@@ -119,7 +119,6 @@ function Graph(nodes){
   }
 }
 
-
 function Score(owner){
   this.score = 1;
   this.owner = owner;
@@ -130,7 +129,7 @@ function Score(owner){
     offset += __settings.turnSpeed / 2
     timeline['node-0'].add({
       targets: '#team' + this.owner,
-      height: `${this.score}%`,
+      height: `${(this.score / __settings.nodeCount) * 100}%`,
       easing: 'easeInQuad',
       offset: offset,
       duration: 0
@@ -143,32 +142,5 @@ function Score(owner){
       offset: offset,
       duration: 0
     });
-      //Change the console.logs with animations
-      // if(this.eventFired('occupant')){
-      //   curXpos = parseInt(this.events.lastOccupant) * -1 * this.iconSize;
-      //   xpos = parseInt(this.occupant) * -1 * this.iconSize;
-      //   dur = __settings.turnSpeed / 2;
-      //   timeline["node-"+this.id].add({
-      //     targets: '#node-' + this.id + ' .owner-icon',
-      //     backgroundPosition:[
-      //       {value:`${curXpos} 36px`,duration:dur*.25,delay:0},
-      //       {value:`${xpos}px 36px`,duration:dur*.1,delay:dur*.25},
-      //       {value:`${xpos}px 0`,duration:dur*.65,delay:dur*.35}
-      //     ],
-      //     // backgroundColor:this.colors[this.occupant],
-      //     // color:"#FFF",
-      //     easing: 'easeInQuad',
-      //     offset: offset + __settings.turnSpeed / 2,
-      //     // duration: 1
-      //   });
-      //   // console.log("Occupant changed!",this.id);
-      // }
-      // else if(this.eventFired('decrease')){
-      //   // console.log("Units decreased!",this.id);
-      // }
-      // else if(this.eventFired('increase')){
-      //   // console.log("Units increased!",this.id);
-      // }
-
   }
 }
