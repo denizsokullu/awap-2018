@@ -740,7 +740,9 @@ function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,r
       callback(score);
       fs.writeFile(`${folderPath}/${outputName}.js`,stdout,(err)=>{
         if(err){
-          rimraf(folderPath,()=>{});
+          rimraf(folderPath,()=>{
+            res.redirect('/');
+          });
         }
       });
     }
