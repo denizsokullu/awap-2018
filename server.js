@@ -568,21 +568,24 @@ function handleUpload(req,res,settings){
             // call the running script here
             if(settings.isPrivate){
                 files = ['player1','player2','player3','player4']
-                runGame(execPath,folderPath,mapName,gameID,files,-1,teamID,res,function(){
-                  res.redirect('/');
+                runGame(execPath,folderPath,mapName,gameID,files,-1,teamID,res,function(score,failed){
+                  // res.redirect('/');
                 });
             }
             else if(settings.isPublic){
               fillMatch(teamID,function(playerPool,teamIndex){
-                runGame('submissions/public',gamesPath,mapName,gameID,playerPool,teamIndex,teamID,res,function(score){
-                  updateScore(teamID,parseInt(score));
-                  res.redirect('/');
+                runGame('submissions/public',gamesPath,mapName,gameID,playerPool,teamIndex,teamID,res,function(score,failed){
+                  if(!failed){
+                    updateScore(teamID,parseInt(score));
+                  }
+
                 });
               })
             }
             else if(settings.isCompetition){
-              res.redirect('/')
+              // res.redirect('/')
             }
+            res.redirect('/');
 
         }).catch(err => {
             // handle I/O error
@@ -717,7 +720,7 @@ function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,r
       console.log(`Error: ${error}`);
       //remove the uploaded file and redirect to /team with a message
       rimraf(folderPath,()=>{
-        res.redirect('/');
+        // callback(0,true)
       })
       return;
     }
@@ -725,7 +728,7 @@ function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,r
     else if(stderr){
       console.log('error')
       rimraf(folderPath,()=>{
-        res.redirect('/');
+        // callback(0,true)
       })
       return;
     }
@@ -738,13 +741,13 @@ function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,r
         // console.log(data.state[lastRound],teamIndex+1);
         updatePublicIndex(teamID,teamIndex+1);
         score = data.state[lastRound][teamIndex+1].score;
-
       }
-      callback(score);
+      callback(score,false);
+      console.log(`${folderPath}/${outputName}.js`);
       fs.writeFile(`${folderPath}/${outputName}.js`,stdout,(err)=>{
         if(err){
           rimraf(folderPath,()=>{
-            res.redirect('/');
+            // res.redirect('/');
           });
         }
       });
