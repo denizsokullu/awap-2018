@@ -2,7 +2,7 @@ html
   head
     include includes/header.pug
     script(src="js/submission.js")
-  body
+  body#subs-body
     include includes/structure.pug
       .row.submission-outer
         .col-xs-12.col-md-6.submit
@@ -12,16 +12,16 @@ html
           .row
             .explanation
               p
-              | Upload your player.py, pick enemies and see it visualized on this website or upload your final code to compete!
+              | Upload your player.py, pick enemies(you can pick your own AI also as the enemy or use the ones we give you) and see it visualized on this website or upload your final code to compete!
           .row.options
-            .col-xs-4.private.selected
+            .col-xs-4.private
               h2 Private
             .col-xs-4.public
               h2 Public
             .col-xs-4.competition
               h2 Competition
           .row.form-container
-            .private-form.selected
+            .private-form
               form(method='POST' action='/uploadPrivate' encType="multipart/form-data" id='private-form')
                 div.form-group
                   .dropdown
@@ -31,16 +31,16 @@ html
                       option(value='grid') Grid
                       option(value='flower') Flower
                 div.form-group
-                  .label Player 1 code:
+                  .label Player 1 (Bottom Left):
                   input#file.form-control(type='file' name='player1' accept=".py")
                 div.form-group
-                  .label Player 2 code:
+                  .label Player 2 (Bottom Right):
                   input#file.form-control(type='file' name='player2' accept=".py")
                 div.form-group
-                  .label Player 3 code:
+                  .label Player 3 (Top Right):
                   input#file.form-control(type='file' name='player3' accept=".py")
                 div.form-group
-                  .label Player 4 code:
+                  .label Player 4 (Top Left):
                   input#file.form-control(type='file' name='player4' accept=".py")
                 div.form-group.submit-button
                   button.button(type='submit') Upload!
@@ -64,7 +64,9 @@ html
                     button.button(type='submit') Upload!
             .competition-form
               .desc
-                p Only your final submission counts! Make sure that you have run your code privately and good luck in getting your food empire algorithm to the top place!
+                p Only your final submission counts! Make sure that you have ran your code privately and good luck in getting your food empire algorithm to the top place!
+                br
+                p The replays for each round will be up as we run them and upload the results.
                 br
                 p 
                   strong Submission Deadline:
@@ -78,13 +80,13 @@ html
                   div.form-group.submit-button
                     button.button(type='submit') Upload!
         .col-xs-12.col-md-6.submissions
-          .private-submissions.selected
+          .private-submissions
             .row
               .title
                 h3 Submissions
             .row.submission-container
             .row.link
-              a.button#private-link(href='/game?type=private') View
+              a.button#private-link(href='/game?type=private') View Replays
           .public-submissions
             .row
               .title
@@ -93,11 +95,15 @@ html
             .row.link
               a.button#leaderboard-link(href='/leaderboard') Leaderboard
             .row.link
-              a.button#public-link(href='/game?type=public') View
+              a.button#public-link(href='/game?type=public') View Replays
           .competition-submissions
             .row
               .title
                 h3 Submissions
             .row.submission-container
             .row.link
-              a.button#public-link(href='/game?type=competition') View
+              a.button#public-link(href='/game?type=competition&round=1') View Replays - Round 1
+            .row.link
+              a.button#public-link(href='/game?type=competition&round=2') View Replays - Round 2
+            .row.link
+              a.button#public-link(href='/game?type=competition&round=3') View Replays - Round 3

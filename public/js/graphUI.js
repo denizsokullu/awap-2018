@@ -22,7 +22,6 @@ var timeline;
 var progress;
 var currentGameplay;
 
-
 function createParallelTimeline(state,progress){
 
   timeline = {};
@@ -79,6 +78,11 @@ function createParallelTimeline(state,progress){
             changedNodes.forEach(node => {
               __graph.animateNode(node,timeline,turnOffset)
             })
+
+            score = actions[player].score;
+            __graph.scores[player].updateScore(score);
+            __graph.scores[player].animateScore(timeline,turnOffset);
+
         });
         $('.loaded-turns .change').text(parseInt(turn + 1));
     });
@@ -142,12 +146,24 @@ function loadRunAnimationListener(){
     //Find the filename
     filename = $(".dropdown select").val();
     g = visualizationData[filename].board
+
+    if(visualizationData[filename].type == 'competition'){
+      //update the team names here
+      teamNames =  visualizationData[filename].teamNames
+      Object.keys(teamNames).map(function(key){
+        $('#name-'+key).text(teamNames[key]);
+      })
+    }
+
     //Load the graph
     loadGraph(visualizationData[filename]);
   })
 }
 
 function loadControls(){
+
+  //Node Count
+  resetNodeCount();
 
   // Handle Graph Dragging
   $('#graph-container').draggable();
@@ -178,6 +194,13 @@ function removeGraph(){
 
 function resetZoom(){
   $('#graph-container').css('transform','scale(1,1)');
+}
+
+function resetNodeCount(){
+  $('.score').css({
+    height:'1%'
+  })
+  $('.score span').text('1');
 }
 
 function graphZoom(amount){

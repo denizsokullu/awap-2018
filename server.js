@@ -119,7 +119,7 @@ app.get('/game',function(req,res){
   type = req.query.type
   //check if the user is logged in
   if(typeof req.session.key === "undefined"){
-    raiseError(req,res,"You are not logged in");
+    res.redirect('/login')
     return;
   }
   if(type == 'competition'){
@@ -132,13 +132,19 @@ app.get('/game',function(req,res){
         files = files.filter(curFile=>{
           return parseInt(curFile.split('-')[0]) == currentRound
         });
+        if(files.length == 0){
+          jsonOutput = 'visualizationData={}';
+          res.render("visualization",{output:jsonOutput});
+          return
+        }
         const promises = files.map(filename => {
           return new Promise((resolve, reject) => {
             getTeamNames(filename.split('.')[0],function(data){
               try {
                   if(data.found){
                     output = JSON.parse(fs.readFileSync(`game/submissions/competition/results/${filename}`,'utf8'));
-                    output[players] = data.players;
+                    output.teamNames = data.teamNames
+                    output.type = 'competition'
                     gameName = `Round-${filename.split('-')[0]} Game-${filename.split('.')[0].split('-')[1]}`
                     outputs[gameName] = output;
                   }
@@ -154,7 +160,8 @@ app.get('/game',function(req,res){
             // call the running script here
             // console.log(outputs);
             jsonOutput = 'visualizationData='+JSON.stringify(outputs);
-            res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+            data = {output:jsonOutput,teamNames:{},games:outputs}
+            res.render("visualization",data);
         }).catch(err => {
             // handle I/O error
             console.error(err);
@@ -162,7 +169,7 @@ app.get('/game',function(req,res){
       }
       else{
         jsonOutput = 'visualizationData={}';
-        res.render("visualization",{output:jsonOutput,teamName:req.session.teamName});
+        res.render("visualization",{output:jsonOutput});
       }
     })
   }
@@ -193,7 +200,9 @@ app.get('/game',function(req,res){
             // call the running script here
             // console.log(outputs);
             jsonOutput = 'visualizationData='+JSON.stringify(outputs);
-            res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+            res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs,
+              teamNames:{}
+            });
         }).catch(err => {
             // handle I/O error
             console.error(err);
@@ -230,7 +239,19 @@ app.get('/game',function(req,res){
                     filename = outputFilename.split('.')[0]
                     outputs[filename] = JSON.parse(data);
                     jsonOutput = 'visualizationData='+JSON.stringify(outputs);
-                    res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+                    getPublicIndex(key,function(index){
+                      // console.log(index);
+                      if(index == null){
+                        res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs});
+                      }
+                      else{
+                        teamNames = {};
+                        indexKey = `team${index}`;
+                        // console.log(req.session.teamName);
+                        teamNames[indexKey] = req.session.teamName;
+                        res.render("visualization",{output:jsonOutput,teamName:req.session.teamName,games:outputs,teamNames:teamNames});
+                      }
+                    })
                   return;
                 });
             }
@@ -370,7 +391,7 @@ app.post('/submissions/:type',(req,res)=>{
         })
         if(hasInput || hasOutput){
           file = {};
-          file[filename] = { status: hasOutput ? 'Completed' : 'Uploaded'}
+          file[filename] = { status: hasOutput ? 'Completed' : 'In progress'}
           res.json({success:true,
                     submissions:file})
         }
@@ -421,10 +442,35 @@ app.post('/submissions/:type',(req,res)=>{
 
 function getTeamNames(gameNum,callback){
   ref = db.ref('competitionMapping').child(gameNum);
+  users = db.ref('users');
   ref.once('value',function(data){
     players = data.val();
     if(players){
-      callback({players:players,found:true});
+      teamNames = {};
+      users.once('value',function(data){
+        usersDB = data.val();
+        Object.keys(players).map(key=>{
+          playerNum = parseInt(key) + 1;
+          teamNames[`team${playerNum}`] = usersDB[players[key]].teamName
+        })
+        // console.log(teamNames);
+        callback({teamNames:teamNames,found:true});
+      })
+    }
+  });
+}
+
+function updatePublicIndex(teamID,index){
+    db.ref('users').child(teamID).update({publicIndex:index});
+}
+
+function getPublicIndex(teamID,callback){
+  db.ref('users').child(teamID).child('publicIndex').once('value',function(data){
+    if(data.val() == null){
+      callback(null);
+    }
+    else{
+      callback(data.val());
     }
   });
 }
@@ -432,19 +478,19 @@ function getTeamNames(gameNum,callback){
 function handleUpload(req,res,settings){
 
   if(typeof req.session.key === "undefined"){
-    raiseError(req,res,"You are not logged in");
+    res.redirect('/login')
     return;
   }
 
   //Checks to make sure that the files are uploaded.
   if (!req.files || req.files === {}){
     //make this a page that you can reroute back to team?
-    raiseError(req,res,"No file was uploaded");
+    res.redirect('/')
     return;
   }
 
   if(settings.check && !settings.check()){
-    raiseError(req,res,"Past submission deadline");
+    res.redirect('/')
     return;
   }
 
@@ -523,11 +569,15 @@ function handleUpload(req,res,settings){
             // call the running script here
             if(settings.isPrivate){
                 files = ['player1','player2','player3','player4']
-                runGame(execPath,folderPath,mapName,gameID,files);
+                runGame(execPath,folderPath,mapName,gameID,files,-1,teamID,function(){
+
+                });
             }
             else if(settings.isPublic){
-              fillMatch(teamID,function(playerPool){
-                runGame('submissions/public',gamesPath,mapName,gameID,playerPool);
+              fillMatch(teamID,function(playerPool,teamIndex){
+                runGame('submissions/public',gamesPath,mapName,gameID,playerPool,teamIndex,teamID,function(score){
+                  updateScore(teamID,parseInt(score));
+                });
               })
             }
             else if(settings.isCompetition){
@@ -550,9 +600,9 @@ function handleUpload(req,res,settings){
 function fillMatch(teamID,callback){
   //fills the upload directory with 3 more player codes.
   publicPath = 'game/submissions/public'
-  playerPool = [teamID];
-  playersNeeded = 3;
-  playerPoolFiles = [];
+  playerPool = [];
+  playersNeeded = 4;
+  playerPoolFiles = ['','','',''];
   fs.readdir(publicPath,function(err,teams){
     if(teams){
       numTeams = teams.length;
@@ -561,7 +611,12 @@ function fillMatch(teamID,callback){
         randomPlayerId = teams[randomIndex];
         playerPool.push(randomPlayerId);
       }
-      const promises = playerPool.map(player => {
+
+      //pick a random index, replace that with the teamID;
+      teamIndex = parseInt(Math.random() * playersNeeded);
+      playerPool[teamIndex] = teamID;
+
+      const promises = playerPool.map((player,index) => {
         return new Promise((resolve, reject) => {
           fs.readdir(`${publicPath}/${player}`,function(err,files){
               //the folder name and the output filename are the sam
@@ -569,7 +624,7 @@ function fillMatch(teamID,callback){
                 files.map(file=>{
                   if(file.toLowerCase().includes('.py')){
                     filename = file.split('.')[0];
-                    playerPoolFiles.push(`${player}.${filename}`);
+                    playerPoolFiles[index] = `${player}.${filename}`;
                   }
                 })
               }
@@ -579,7 +634,8 @@ function fillMatch(teamID,callback){
       });
 
       Promise.all(promises).then(_ => {
-        callback(playerPoolFiles)
+        // console.log(playerPool,playerPoolFiles);
+        callback(playerPoolFiles,teamIndex)
       }).catch(err => {
           // handle I/O error
           console.error(err);
@@ -640,12 +696,18 @@ function writeFile(data, dest, isBot, botPath) {
   });
 }
 
-function runGame(execPath,folderPath,mapName,outputName,files){
+function updateScore(teamID,score){
+  // console.log(score);
+  db.ref('users').child(teamID).update({publicScore:score});
+}
+
+function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,callback){
   const { exec } = require('child_process');
   dotPath = execPath.replace(/\//g,'.');
   files = files.map(player=>{
     return `${dotPath}.${player}`
   })
+  // console.log(files);
   exec(`python game/gameMain.py ${files.join(' ')} ${mapName}`, EXEC_DEFAULTS, (error,stdout,stderr)=>{
     if(error){
       // console.log(`Error: ${error}`);
@@ -664,6 +726,16 @@ function runGame(execPath,folderPath,mapName,outputName,files){
     }
     //Code ran to completion without errors
     else{
+      score = 0;
+      if(teamIndex != -1){
+        data = JSON.parse(stdout);
+        lastRound = data.state.length - 1;
+        // console.log(data.state[lastRound],teamIndex+1);
+        updatePublicIndex(teamID,teamIndex+1);
+        score = data.state[lastRound][teamIndex+1].score;
+
+      }
+      callback(score);
       fs.writeFile(`${folderPath}/${outputName}.js`,stdout,(err)=>{
         if(err){
           rimraf(folderPath,()=>{});

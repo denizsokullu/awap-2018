@@ -4,7 +4,7 @@ html
     link(rel="stylesheet" type="text/css" href="style/viz.css")
     include includes/header.pug
     include includes/visualization.pug
-    //- include includes/nav.pug
+    a.backButton(href='/') Back
     .fullText#intro-message Choose a game to visualize!
     .fullText#loading.hidden Loading game...
     #graph-container
@@ -14,11 +14,44 @@ html
       #players
     .ui
       .ui-similar
-        .ui-row.title Team Stats
-        .ui-row
-        .ui-row
-        .ui-row
-        .ui-row
+        .ui-row.title Locations Owned
+        .ui-row.team-scores
+          .score#team1
+            span 1
+          .score#team2
+            span 1
+          .score#team3
+            span 1
+          .score#team4
+            span 1
+        .ui-row.team-icons
+          img(src='images/pizza.svg')
+          img(src='images/burger.svg')
+          img.fries(src='images/fries.svg')
+          img(src='images/hotdog.svg')
+        .ui-row.team-names
+          if teamNames
+            if teamNames.team1
+              span.team-name#name-team1= teamNames.team1
+            else
+              span.team-name#name-team1 Mercur-iOS
+            if teamNames.team2
+              span.team-name#name-team2= teamNames.team2
+            else
+              span.team-name#name-team2 Queue’d
+            if teamNames.team3
+              span.team-name#name-team4= teamNames.team3
+            else
+              span.team-name#name-team3 Five Bytes
+            if teamNames.team4
+              span.team-name#name-team4= teamNames.team4
+            else
+              span.team-name#name-team4 The Original Big-O Shop
+          else 
+            span.team-name#name-team1 Mercur-iOS
+            span.team-name#name-team2 Queue’d
+            span.team-name#name-team3 Five Bytes
+            span.team-name#name-team4 The Original Big-O Shop
       .ui-similar
         .ui-row.title Game Selection
         .ui-row
@@ -59,31 +92,3 @@ html
           button.button#zoom-out Zoom -
         .ui-row
           button.button#toggle-numbers Toggle Numbers
-    //- .ui-top-bar
-    //-   .left-align
-    //-   .right-align 
-    //-     if games
-    //-       .dropdown
-    //-         .label Current Loaded Game:
-    //-         select
-    //-           each val in Object.keys(games)
-    //-             option= val
-    //-     else
-    //-       div No submissions made.
-    //-     button.button.run-animation Run
-    //- .ui-bottom-bar
-    //-   .left-align
-    //-     button.button.play Play
-    //-     button.button.pause Pause
-    //-     button.button.restart Restart
-    //-     input.progress(step="1" type="range" min="0" max="100" value="0")
-    //-     span.progress-counter
-    //-       |Turn:  
-    //-       span.change 0
-    //-       |  / 100
-    //-   .right-align
-    //-     button.button#zoom-reset Zoom Reset
-    //-     button.button#zoom-in Zoom +
-    //-     button.button#zoom-out Zoom -
-    //-   .clear
-  

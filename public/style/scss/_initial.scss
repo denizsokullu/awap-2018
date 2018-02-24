@@ -1,5 +1,14 @@
 .outer{
-  margin-top:200px;
+  margin-top:150px;
+}
+.sponsors{
+  display:flex;
+  align-items: center;
+  text-align:center;
+  margin-top:5vh;
+  img{
+    width:50%;
+  }
 }
 .banner{
   img{
@@ -15,11 +24,17 @@
     line-height:1.2;
   }
 }
-
+#subs-body,
+#lead-body {
+  background:url('../images/background.svg');
+  background-size:50%;
+  background-repeat:repeat;
+}
 .submission-outer{
   * {
     color:$color-ui-1;
   }
+  background-color: white;
   margin:100px 0;
   border-radius:4px;
   // border:1px solid rgba(0,0,0,.2);
@@ -154,13 +169,27 @@
 
   }
 }
+.button{
+  @include button;
+}
+.button-row{
+  text-align:center;
+  margin-top:2rem;
+  margin-bottom:2rem;
+}
+.parent{
+  box-shadow:0 2px 10px 0 rgba(0,0,0,.2);
+  background:white;
+}
 .leaderboard-outer{
-  margin-top:120px;
+  margin-top:calc(120px - 2rem);
+  padding-top:2rem;
   .leaderboard{
     border:1px solid #eee;
     padding:0;
     & > div{
       padding:1rem;
+      background:white;
     }
     .header{
       background:#eee;

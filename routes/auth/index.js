@@ -36,8 +36,14 @@ module.exports = (function(){
     // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
     var email = req.body.email;
     var key = req.body.key;
+    try{
+      currentUser = db.ref('/users').child(key).child('emails');
+    }
+    catch(err){
+      res.redirect('/');
+      return;
+    }
 
-    currentUser = db.ref('/users').child(key).child('emails');
     currentUser.once('value',function(data){
       if(!data.val()){
         res.redirect("/login");
@@ -46,11 +52,14 @@ module.exports = (function(){
       emails = data.val();
       emailsArr = Object.keys(emails).map((key)=> {return emails[key]});
       if (emails == null){
-        raiseError(req,res,"The key you provided does not match a team");
+        res.redirect("/login");
+        return;
+        // raiseError(req,res,"The key you provided does not match a team");
       }
-
       else if (!emailsArr.includes(email)){
-        raiseError(req,res,"The email you have entered is not registered");
+        res.redirect("/login");
+        return
+        // raiseError(req,res,"The email you have entered is not registered");
       }
       else{
         teamData = db.ref('/users').child(key);
@@ -62,9 +71,9 @@ module.exports = (function(){
           else{
             req.session.teamName = content.teamName;
           }
+          req.session.key = key;
+          res.redirect("/");
         })
-        req.session.key = key;
-        res.redirect("/");
       }
     })
   });

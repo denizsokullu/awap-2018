@@ -78,6 +78,7 @@ def run_game(board, players):
             # Player IDs start at 1, so we use 1+j instead of j
             nodes, player = board.get_owned_nodes(1+j)
             score[j] = len(nodes)
+            curr_turn[str(1+j)]["score"] = len(nodes)
             score_str = score_str + "P" + str(j) + "(" + str(score[j]) + ") - "
             if score[j] == 0:
                 continue
@@ -86,10 +87,10 @@ def run_game(board, players):
 
 
             # Placement Turn
-            curr_player.init_turn(board.G.copy(), nodes, 4 + int(  (1-pow(.9,player['gain']))/(1-.9)   ))
-            placements = curr_player.player_place_units()
 
             try:
+                curr_player.init_turn(board.G.copy(), nodes, 4 + int(  (1-pow(.9,player['gain']))/(1-.9)   ))
+                placements = curr_player.player_place_units()
                 temp_G, temp_players = board.check_moves(placements, 1+j)
             except Exception as ex:
                 verbose_print(ex)
@@ -107,9 +108,8 @@ def run_game(board, players):
             curr_turn[str(1+j)]["placement"] = placements["place"];
 
             # Movement Turn
-            curr_player.init_turn(board.G.copy(), nodes, player['gain'])
-
             try:
+                curr_player.init_turn(board.G.copy(), nodes, player['gain'])
                 movements = curr_player.player_move_units()
             except Exception as ex:
                 verbose_print(ex)
@@ -128,6 +128,11 @@ def run_game(board, players):
 
             curr_turn[str(1+j)]["moves"] = movements["move"];
 
+
+            nodes, player = board.get_owned_nodes(1+j)
+            score[j] = len(nodes)
+            curr_turn[str(1+j)]["score"] = len(board.get_owned_nodes(1+j)[0])
+
         if (COMPETITION_MODE):
             if (len(list(filter(lambda x: x > 0,score))) == 1):
                 break
@@ -135,10 +140,9 @@ def run_game(board, players):
         verbose_print(score_str);
 
         data["state"].append(curr_turn)
-
-    verbose_print('Final Board State')
-    if (VISUALIZE):
-        board.draw()
+    # print('Final Board State')
+    # board.draw()
+    # data['score'] = score
     jsonData = json.dumps(data)
     if(SERVER_MODE):
         sys.stdout = temp_stdout

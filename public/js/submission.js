@@ -1,18 +1,37 @@
 $(window).ready(function(){
   $('.private,.competition,.public').click(function(){
+    console.log($(this));
     if(!$(this).hasClass('selected')){
       $('.private,.competition,.public').removeClass('selected');
       $(this).addClass('selected');
       formType = $(this).attr('class').split(' ')[1];
       //update the form
+      setTab(formType);
       $('.private-form,.competition-form,.public-form').removeClass('selected');
       $("."+formType+"-form").addClass('selected');
       //update the submissions
       $('.private-submissions,.competition-submissions,.public-submissions').removeClass('selected');
+      console.log($("."+formType+"-submissions"));
       $("."+formType+"-submissions").addClass('selected');
     }
   })
+  $(`.${getTab()}`).click();
 })
+
+function setTab(tabName){
+  window.localStorage.setItem('tabName',tabName);
+}
+
+function getTab(){
+  res = window.localStorage.getItem('tabName')
+  if(res == null){
+    return 'private'
+  }
+  else{
+    return res
+  }
+}
+
 
 function getUrl(path){
   window.location.href = path;
@@ -69,6 +88,7 @@ function handleErrors(errors){
     }
   });
 }
+
 $(window).ready(function(){
   private = {
     type:'private',

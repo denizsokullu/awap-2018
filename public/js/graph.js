@@ -14,6 +14,12 @@ function Graph(nodes){
   this.nodeData = nodes;
   this.nodes = [];
   this.edges = [];
+  this.scores = {
+    1:new Score(1),
+    2:new Score(2),
+    3:new Score(3),
+    4:new Score(4)
+  }
   this.createNodes = function(startNodes){
     nodeIDs = Object.keys(this.nodeData);
 
@@ -110,5 +116,59 @@ function Graph(nodes){
   }
   this.animateNode = function(nodeid,timeline,offset){
     this.nodes[nodeid].animate(timeline,offset);
+  }
+}
+
+
+function Score(owner){
+  this.score = 1;
+  this.owner = owner;
+  this.updateScore = function(newScore){
+    this.score = newScore
+  }
+  this.animateScore = function(timeline,offset){
+    offset += __settings.turnSpeed / 2
+    timeline['node-0'].add({
+      targets: '#team' + this.owner,
+      height: `${this.score}%`,
+      easing: 'easeInQuad',
+      offset: offset,
+      duration: 0
+    });
+    timeline['node-0'].add({
+      targets: '#team' + this.owner + ' span',
+      innerHTML: this.score,
+      round: 1,
+      easing: 'easeInQuad',
+      offset: offset,
+      duration: 0
+    });
+      //Change the console.logs with animations
+      // if(this.eventFired('occupant')){
+      //   curXpos = parseInt(this.events.lastOccupant) * -1 * this.iconSize;
+      //   xpos = parseInt(this.occupant) * -1 * this.iconSize;
+      //   dur = __settings.turnSpeed / 2;
+      //   timeline["node-"+this.id].add({
+      //     targets: '#node-' + this.id + ' .owner-icon',
+      //     backgroundPosition:[
+      //       {value:`${curXpos} 36px`,duration:dur*.25,delay:0},
+      //       {value:`${xpos}px 36px`,duration:dur*.1,delay:dur*.25},
+      //       {value:`${xpos}px 0`,duration:dur*.65,delay:dur*.35}
+      //     ],
+      //     // backgroundColor:this.colors[this.occupant],
+      //     // color:"#FFF",
+      //     easing: 'easeInQuad',
+      //     offset: offset + __settings.turnSpeed / 2,
+      //     // duration: 1
+      //   });
+      //   // console.log("Occupant changed!",this.id);
+      // }
+      // else if(this.eventFired('decrease')){
+      //   // console.log("Units decreased!",this.id);
+      // }
+      // else if(this.eventFired('increase')){
+      //   // console.log("Units increased!",this.id);
+      // }
+
   }
 }
