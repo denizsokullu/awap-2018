@@ -92,6 +92,7 @@ app.get('/leaderboard', function(req,res){
   db.ref('users').once('value',function(data){
     users = data.val();
     Object.keys(users).map((user)=>{
+      console.log(users[user]);
       if(users[user].publicScore){
         if(user == req.session.key){
           allScores.push({score:users[user].publicScore,highlight:true})
@@ -104,6 +105,7 @@ app.get('/leaderboard', function(req,res){
     allScores.sort(function(obj1,obj2){
       return parseInt(obj2.score) - parseInt(obj1.score);
     })
+    console.log(allScores);
     res.render('leaderboard',allScores);
   })
 })
@@ -568,13 +570,13 @@ function handleUpload(req,res,settings){
             // call the running script here
             if(settings.isPrivate){
                 files = ['player1','player2','player3','player4']
-                runGame(execPath,folderPath,mapName,gameID,files,-1,teamID,function(){
+                runGame(execPath,folderPath,mapName,gameID,files,-1,teamID,res,function(){
 
                 });
             }
             else if(settings.isPublic){
               fillMatch(teamID,function(playerPool,teamIndex){
-                runGame('submissions/public',gamesPath,mapName,gameID,playerPool,teamIndex,teamID,function(score){
+                runGame('submissions/public',gamesPath,mapName,gameID,playerPool,teamIndex,teamID,res,function(score){
                   updateScore(teamID,parseInt(score));
                 });
               })
@@ -700,7 +702,7 @@ function updateScore(teamID,score){
   db.ref('users').child(teamID).update({publicScore:score});
 }
 
-function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,callback){
+function runGame(execPath,folderPath,mapName,outputName,files,teamIndex,teamID,res,callback){
   const { exec } = require('child_process');
   dotPath = execPath.replace(/\//g,'.');
   files = files.map(player=>{
