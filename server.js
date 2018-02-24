@@ -571,20 +571,21 @@ function handleUpload(req,res,settings){
             if(settings.isPrivate){
                 files = ['player1','player2','player3','player4']
                 runGame(execPath,folderPath,mapName,gameID,files,-1,teamID,res,function(){
-
+                  res.redirect('/');
                 });
             }
             else if(settings.isPublic){
               fillMatch(teamID,function(playerPool,teamIndex){
                 runGame('submissions/public',gamesPath,mapName,gameID,playerPool,teamIndex,teamID,res,function(score){
                   updateScore(teamID,parseInt(score));
+                  res.redirect('/');
                 });
               })
             }
-            else if(settings.isCompetition){
+            // else if(settings.isCompetition){
+            //
+            // }
 
-            }
-            res.redirect('/');
         }).catch(err => {
             // handle I/O error
             console.error(err);
