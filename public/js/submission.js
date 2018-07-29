@@ -110,21 +110,21 @@ $(window).ready(function(){
     fetchSubmissions(private);
     window.setInterval(function(){
       fetchSubmissions(private);
-    },3000)
+    },5000)
   },0)
 
   window.setTimeout(function(){
     fetchSubmissions(public);
     window.setInterval(function(){
         fetchSubmissions(public);
-    },3000)
+    },5000)
   },400)
 
   window.setTimeout(function(){
     fetchSubmissions(competition);
     window.setInterval(function(){
         fetchSubmissions(competition);
-    },3000)
+    },5000)
   },800)
 
 });

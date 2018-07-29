@@ -12,13 +12,16 @@ html
             h2 Login to see your team's algorithm live!
             p You should be using the key sent to you in your email as the value for the key field.
             p If you have lost your key or haven't gotten one, ask your teammates our find one of the organizers so that they can find it for you.
+            p For demo purposes, use
+            p email: denizaydinsokullu@gmail.com
+            p pass: -KxeAKvtRTd1BJ5GwF7l
             form(method='POST' action='/login')
                       div.form-group
-                        label(for='email') Email: 
-                        input#email.form-control(type='email', placeholder='' name='email')
+                        label(for='email') Email:
+                        input#email.form-control(type='email' placeholder='' name='email')
                       div.form-group
-                        label(for='key') Key: 
-                        input#pw.form-control(type='password' name='key')
+                        label(for='key') Key:
+                        input#pw.form-control(type='password' name='key' placeholder='')
                       button.btn.btn-primary(type='submit') Log in!
       .row.sponsors
         .col-md-4.col-md-offset-2
